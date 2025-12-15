@@ -1,12 +1,20 @@
 package org.darwin_world.model.map;
 
-import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.util.Vector2D;
 
 public class GlobeMap extends AbstractWorldMap{
 
+    private final int jungleBottom;
+    private final int jungleTop;
+
     public GlobeMap(int width, int height) {
         super(width, height);
+
+        int jungleHeight = (int) (height * 0.2);
+
+        int normalRows = height - jungleHeight;
+        this.jungleBottom = normalRows / 2;
+        this.jungleTop = jungleBottom + jungleHeight;
     }
 
     public MoveResult handleMove(Vector2D position, MapDirection direction) {
