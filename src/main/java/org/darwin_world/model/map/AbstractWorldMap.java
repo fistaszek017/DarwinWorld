@@ -1,15 +1,15 @@
 package org.darwin_world.model.map;
 
+import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.util.Vector2D;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractWorldMap implements WorldMap {
 
-    private final Boundary BOUNDARY;
-    protected final Map<Vector2D, Object> map = new HashMap<>();
+    protected final Boundary BOUNDARY;
+    protected final Map<Vector2D, List<Object>> animals = new HashMap<>();
 
     public AbstractWorldMap(int width, int height) {
         this.BOUNDARY = new Boundary(new Vector2D(0,0), new Vector2D(width,height));
@@ -23,29 +23,38 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public void place(Object object, Vector2D position) throws IncorrectPositionException {
         if (!isOutOfBounds(position)) {
-            map.put(position, object);
+            List<Object> objectsAtPosition = animals.computeIfAbsent(position, _ -> new ArrayList<>());
+            objectsAtPosition.add(object);
             return;
         }
         throw new IncorrectPositionException(position);
     }
 
+    @Override
     public Object objectAt(Vector2D position) {
-        return map.get(position);
+        return animals.get(position);
     }
 
     @Override
     public boolean isOccupied(Vector2D position) {
-        return map.containsKey(position);
+        return animals.containsKey(position);
     }
 
     @Override
-    public void move(Object object, int direction) {
-        //TODO after animal implemented
+    public void move(Animal animal, Vector2D odlPosition, Vector2D newPosition) throws IncorrectPositionException {
+        List<Object> objectsAtPosition = animals.get(newPosition);
+        objectsAtPosition.remove(animal);
+
+        if (objectsAtPosition.isEmpty()) {
+            animals.remove(newPosition);
+        }
+
+        place(animal, newPosition);
     }
 
     @Override
-    public Map<Vector2D, Object> getMap() {
-        return new HashMap<>(map);
+    public Map<Vector2D, Object> getAnimals() {
+        return new HashMap<>(animals);
     }
 
 }

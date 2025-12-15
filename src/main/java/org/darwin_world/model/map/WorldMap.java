@@ -1,5 +1,6 @@
 package org.darwin_world.model.map;
 
+import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.util.Vector2D;
 
@@ -18,7 +19,7 @@ public interface WorldMap {
      * Moves an animal (if it is present on the map) according to specified direction.
      * If the move is not possible, this method has no effect.
      */
-    void move(Object object, int direction);
+    void move(Animal animal, Vector2D oldPosition, Vector2D newPosition) throws IncorrectPositionException;
 
     /**
      * Return true if given position on the map is occupied.
@@ -48,5 +49,5 @@ public interface WorldMap {
      *
      * @return HashMap with elements.
      */
-    Map<Vector2D, Object> getMap();
+    Map<Vector2D, Object> getAnimals();
 }
