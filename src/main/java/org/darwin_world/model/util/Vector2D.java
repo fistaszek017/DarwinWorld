@@ -14,6 +14,14 @@ public record Vector2D(int x, int y) {
         return new Vector2D(-x, -y);
     }
 
+    public boolean precedes(Vector2D other) {
+        return (x <= other.x) && (y <= other.y);
+    }
+
+    public boolean follows(Vector2D other) {
+        return (x >= other.x) && (y >= other.y);
+    }
+
     @Override
     public String toString() {
         return "(%d, %d)".formatted(x, y);
