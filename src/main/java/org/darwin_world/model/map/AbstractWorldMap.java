@@ -76,4 +76,9 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         placeAnimal(animal, newPosition);
     }
+
+    @Override
+    public Map<Vector2D, List<Animal>> getAnimals() {
+        return new HashMap<>(animals);
+    }
 }

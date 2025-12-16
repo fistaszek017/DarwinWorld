@@ -5,6 +5,7 @@ import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.List;
+import java.util.Map;
 
 public interface WorldMap {
 
@@ -56,8 +57,14 @@ public interface WorldMap {
      * Return all objects currently in a given position.
      *
      * @param position The position to return all elements on
-     * @return List of all elements in that position..
+     * @return List of all elements in that position.
      */
     List<Object> objectsAt(Vector2D position);
+
+    /**
+     * Return a copy of the map with all the animals in
+     * @return Map with all animals.
+     */
+    Map<Vector2D, List<Animal>> getAnimals();
 
 }
