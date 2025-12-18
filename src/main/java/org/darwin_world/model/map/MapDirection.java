@@ -14,7 +14,6 @@ public enum MapDirection {
 
     private final Vector2D vector;
     private final int directionIndex;
-
     private static final MapDirection[] valuesById = new MapDirection[8];
 
     static {
@@ -31,6 +30,10 @@ public enum MapDirection {
     public MapDirection rotate(int steps) {
         int nextIndex = (directionIndex + steps) % 8;
         return valuesById[nextIndex];
+    }
+
+    public int getDirectionIndex() {
+        return directionIndex;
     }
 
     public Vector2D getVector() {
