@@ -24,6 +24,23 @@ public interface WorldMap {
     void placePlant(Object plant, Vector2D position) throws IncorrectPositionException;
 
     /**
+     * Removes an animal from the map
+     * @param animal animal to be removed
+     * @param position position the animal is at
+     * @throws IncorrectPositionException If the animal is not at the specified position
+     */
+    void removeAnimal(Animal animal, Vector2D position) throws IncorrectPositionException;
+
+
+    /**
+     * Removes a plant from the map
+     * @param plant plant to be removed
+     * @param position position the plant is at
+     * @throws IncorrectPositionException if the plant is not at the specified position
+     */
+    void removePlant(Object plant, Vector2D position) throws IncorrectPositionException;
+
+    /**
      * Handles moving the animals around with accounting for the globe simulation.
      * @param position Current animal position.
      * @param direction Current animal move direction.
@@ -34,7 +51,11 @@ public interface WorldMap {
 
     /**
      * Moves an animal (if it is present on the map) according to specified direction.
-     * If the move is not possible, this method has no effect.
+     * If the move is not possible, this method throws an exception.
+     * @param animal animal to move.
+     * @param oldPosition current position of the animal
+     * @param newPosition the position to move the animal to
+     * @throws IncorrectPositionException when
      */
     void move(Animal animal, Vector2D oldPosition, Vector2D newPosition) throws IncorrectPositionException;
 

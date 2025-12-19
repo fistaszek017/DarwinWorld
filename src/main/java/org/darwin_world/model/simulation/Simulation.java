@@ -38,7 +38,7 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position) //TODO modify when animal fully implemented
+            Animal animal = new Animal(direction, position, generateRandomGenes() , SimulationConfig) //TODO modify when animal fully implemented
             // jesli zostawiamy logike ciagu symulacji po stronie zwierzeta to raczej zaminilbym te
             // kilka parametrow na 1 rekord albo podal to samo co do symulacji (SimulationConfig)
 
@@ -98,12 +98,6 @@ public class Simulation {
                 // 2. Sortowanie animali po ich wartosciach energii i potem wariant 1 (najwyzszy z najwyzszym)
             }
 
-            //przesuwanie
-            for (Animal animal : animals) {
-                animal.move(map);
-                //tutaj potrzebuje do metody move stare i nowe pozycje, wiec pasuje to zrobic calkiem inaczej
-                //albo aby animal.move zwracalo nowa pozycje albo aby handleMove ruszal animal
-            }
         }
         
     }
