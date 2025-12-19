@@ -33,7 +33,7 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position, generateRandomGenes(), SimulationConfig) //TODO modify when animal fully implemented
+            Animal animal = new Animal(direction, position, generateRandomGenes(), SimulationConfig); //TODO modify when animal fully implemented
             // jesli zostawiamy logike ciagu symulacji po stronie zwierzeta to raczej zaminilbym te
             // kilka parametrow na 1 rekord albo podal to samo co do symulacji (SimulationConfig)
 
@@ -104,7 +104,7 @@ public class Simulation {
                         if (first.readyToReproduce() && second.readyToReproduce()) {
                             reproduceAnimals(first, second);
                         }
-                        
+
                         else break;
                     }
                 }

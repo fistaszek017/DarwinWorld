@@ -80,7 +80,7 @@ public interface WorldMap {
     List<Animal> getAnimalsAt(Vector2D position);
 
     /**
-     * Return a copy of the map with all the animals in
+     * Return a copy of the map with all the animals in it
      * @return Map with all animals.
      */
     Map<Vector2D, List<Animal>> getAnimals();
