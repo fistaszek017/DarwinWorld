@@ -22,8 +22,6 @@ public class Simulation {
         initializeSimulation();
     }
 
-
-
     private void initializeSimulation() {
         Random rand = new Random();
 
@@ -94,6 +92,7 @@ public class Simulation {
                 //jedzenie
                 if (map.plantPresent(position)) {
                     strongest.eat(config.plantNutritionalValue());
+                    map.removePlant(position);
                 }
 
                 //reprodukcja

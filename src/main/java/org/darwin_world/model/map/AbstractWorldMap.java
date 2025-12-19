@@ -53,7 +53,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void removePlant(Object plant, Vector2D position) throws IncorrectPositionException {
+    public void removePlant(Vector2D position) throws IncorrectPositionException {
         if (isInBounds(position) && plants.containsKey(position)) {
             plants.remove(position);
             return;

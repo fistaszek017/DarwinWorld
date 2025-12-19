@@ -34,11 +34,10 @@ public interface WorldMap {
 
     /**
      * Removes a plant from the map
-     * @param plant plant to be removed
      * @param position position the plant is at
      * @throws IncorrectPositionException if the plant is not at the specified position
      */
-    void removePlant(Object plant, Vector2D position) throws IncorrectPositionException;
+    void removePlant(Vector2D position) throws IncorrectPositionException;
 
     /**
      * Handles moving the animals around with accounting for the globe simulation.
