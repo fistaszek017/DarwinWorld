@@ -60,6 +60,26 @@ public class Animal {
         return ((directionToInt + todaysGene)%8);
     }
 
+    public void endDay() {
+        this.day++;
+    }
+
+    public boolean readyToReproduce(){
+        return energy >= reproductionEnergy;
+    }
+
+    public boolean reproduction(Animal animal2){
+        if (this.readyToReproduce() || animal2.readyToReproduce()){
+            return false;
+        }
+        //costam
+        return true;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
 
     public boolean isDead() {
         return energy <= 0;
