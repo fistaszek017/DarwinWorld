@@ -33,7 +33,6 @@ public class GlobeMap extends AbstractWorldMap{
 
         int correctedX = ((intendedPosition.x() % BOUNDARY.width()) + BOUNDARY.width()) % BOUNDARY.width();
         Vector2D finalPosition = new Vector2D(correctedX, intendedPosition.y());
-
         return new MoveResult(finalPosition, direction);
     }
 

@@ -57,12 +57,14 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void move(Animal animal, Vector2D oldPosition, Vector2D newPosition) throws IncorrectPositionException {
         List<Animal> objectsAtPosition = animals.get(oldPosition);
 
-        if (objectsAtPosition != null) {
+        if (objectsAtPosition != null && objectsAtPosition.contains(animal) && isInBounds(newPosition)) {
             objectsAtPosition.remove(animal);
-
             if (objectsAtPosition.isEmpty()) {
                 animals.remove(oldPosition);
             }
+        }
+        else {
+            throw new IncorrectPositionException(newPosition);
         }
 
         placeAnimal(animal, newPosition);

@@ -49,7 +49,17 @@ public class Animal {
             case 6: facingDirection = MapDirection.WEST; break;
             case 7: facingDirection = MapDirection.NORTHWEST; break;
         }
+        Vector2D oldPosition = mapPosition;
         MoveResult result = map.handleMove(this.mapPosition, this.facingDirection);
+
+        try {
+            map.move(this, oldPosition, result.position());
+        } catch (Exception e) {
+            System.out.println("Wrong move from " + oldPosition + " to " + result.position());
+            return;
+            // nie przesuwa animala
+        }
+
         this.mapPosition = result.position();
         this.facingDirection = result.direction();
     }

@@ -39,6 +39,8 @@ public class Simulation {
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
             Animal animal = new Animal(direction, position) //TODO modify when animal fully implemented
+            // jesli zostawiamy logike ciagu symulacji po stronie zwierzeta to raczej zaminilbym te
+            // kilka parametrow na 1 rekord albo podal to samo co do symulacji (SimulationConfig)
 
             try {
                 map.placeAnimal(animal, position);
@@ -77,6 +79,8 @@ public class Simulation {
             Vector2D position = entry.getKey();
             List<Animal> animals = entry.getValue();
 
+            //TODO scalenie w miare mozliwosci tego w 1 petle
+
             //jedzenie
             if (map.plantPresent(position)) {
                 int animalCount = animals.size();
@@ -89,10 +93,17 @@ public class Simulation {
 
             //reprodukcja
             if (animals.size() > 1) {
-                
+                //kilka opcji
+                // 1. Pierwsza kompatybilna para w tablicy
+                // 2. Sortowanie animali po ich wartosciach energii i potem wariant 1 (najwyzszy z najwyzszym)
             }
 
-
+            //przesuwanie
+            for (Animal animal : animals) {
+                animal.move(map);
+                //tutaj potrzebuje do metody move stare i nowe pozycje, wiec pasuje to zrobic calkiem inaczej
+                //albo aby animal.move zwracalo nowa pozycje albo aby handleMove ruszal animal
+            }
         }
         
     }
