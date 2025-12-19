@@ -104,9 +104,11 @@ public class Simulation {
                         if (first.readyToReproduce() && second.readyToReproduce()) {
                             reproduceAnimals(first, second);
                         }
+                        
                         else break;
                     }
                 }
+
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());
             }
