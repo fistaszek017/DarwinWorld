@@ -54,6 +54,10 @@ public class Animal {
         this.facingDirection = result.direction();
     }
 
+    public void eat(double nutritionalValue) {
+        //
+    }
+
     private int todaysDirection() {
         int directionToInt = this.facingDirection.getDirectionIndex();
         int todaysGene = this.genes[day%genes.length];

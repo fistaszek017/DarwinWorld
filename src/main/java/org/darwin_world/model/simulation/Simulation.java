@@ -38,7 +38,7 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position);        //TODO modify when animal fully implemented
+            Animal animal = new Animal(direction, position) //TODO modify when animal fully implemented
 
             try {
                 map.placeAnimal(animal, position);
@@ -51,10 +51,49 @@ public class Simulation {
 
     }
 
+    private int[] generateRandomGenes()
+    {
+        int[] geneTable = new int[config.genomeLength()];
+        Random rand = new Random();
+        for (int i = 0; i < config.genomeLength(); i++) {
+            geneTable[i] = rand.nextInt(8);
+        }
+
+        return geneTable;
+    }
+
+    private void growPlants()
+    {
+
+    }
+
     private void simulateDay() {
         animals = map.getAnimals();
         dayCount++;
 
+        growPlants();
+
+        for (Map.Entry<Vector2D, List<Animal>> entry : animals.entrySet()) {
+            Vector2D position = entry.getKey();
+            List<Animal> animals = entry.getValue();
+
+            //jedzenie
+            if (map.plantPresent(position)) {
+                int animalCount = animals.size();
+                double nutritionalValuePerAnimal = (double) config.plantNutritionalValue() / animalCount;
+
+                for (Animal animal : animals) {
+                    animal.eat(nutritionalValuePerAnimal);
+                }
+            }
+
+            //reprodukcja
+            if (animals.size() > 1) {
+                
+            }
+
+
+        }
         
     }
 

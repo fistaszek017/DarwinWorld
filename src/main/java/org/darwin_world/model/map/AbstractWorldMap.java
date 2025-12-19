@@ -43,24 +43,15 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public List<Object> objectsAt(Vector2D position) {
-        List<Object> objects = new ArrayList<>();
-        List<Animal> animalsAtPosition = animals.get(position);
-        if (animalsAtPosition != null) {
-            objects.addAll(animalsAtPosition);
-        }
-
-        Object plant = plants.get(position);
-        if (plant != null) {
-            objects.add(plant);
-        }
-        return objects;
+    public List<Animal> getAnimalsAt(Vector2D position) {
+        return animals.computeIfAbsent(position, _ -> new ArrayList<>());
     }
 
     @Override
-    public boolean isOccupied(Vector2D position) {
-        return animals.containsKey(position) || plants.containsKey(position);
+    public boolean plantPresent(Vector2D position) {
+        return plants.containsKey(position);
     }
+
 
     @Override
     public void move(Animal animal, Vector2D oldPosition, Vector2D newPosition) throws IncorrectPositionException {
