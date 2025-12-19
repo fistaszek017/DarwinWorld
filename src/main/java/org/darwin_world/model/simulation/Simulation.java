@@ -63,7 +63,12 @@ public class Simulation {
 
     private void growPlants()
     {
+        //
+    }
 
+    private void reproduceAnimals(Animal parent1, Animal parent2)
+    {
+        //
     }
 
     private void simulateDay() {
@@ -93,8 +98,15 @@ public class Simulation {
 
                 //reprodukcja
                 if (animals.size() > 1) {
-                    //kilka opcji
-                    // 1. Pierwsza kompatybilna para w tablicy
+                    for (int i = 0; i < animals.size() - 1; i += 2) {
+                        Animal first = animals.get(i);
+                        Animal second = animals.get(i + 1);
+
+                        if (first.readyToReproduce() && second.readyToReproduce()) {
+                            reproduceAnimals(first, second);
+                        }
+                        else break;
+                    }
                 }
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());

@@ -33,6 +33,15 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public void removeAnimal(Animal animal, Vector2D position) throws IncorrectPositionException {
+        if (isInBounds(position) && animals.containsKey(position) && animals.get(position).contains(animal)) {
+            animals.get(position).remove(animal);
+            return;
+        }
+        throw new IncorrectPositionException(position);
+    }
+
+    @Override
     public void placePlant(Object plant, Vector2D position) throws IncorrectPositionException {
         if (isInBounds(position)) {
             if (!plants.containsKey(position)) {
@@ -43,6 +52,14 @@ public abstract class AbstractWorldMap implements WorldMap {
         throw new IncorrectPositionException(position);
     }
 
+    @Override
+    public void removePlant(Object plant, Vector2D position) throws IncorrectPositionException {
+        if (isInBounds(position) && plants.containsKey(position)) {
+            plants.remove(position);
+            return;
+        }
+        throw new IncorrectPositionException(position);
+    }
 
 
     @Override
