@@ -83,19 +83,13 @@ public class Simulation {
 
             //jedzenie
             if (map.plantPresent(position)) {
-                int animalCount = animals.size();
-                double nutritionalValuePerAnimal = (double) config.plantNutritionalValue() / animalCount;
-
-                for (Animal animal : animals) {
-                    animal.eat(nutritionalValuePerAnimal);
-                }
+                // najsilniejszy je wszystko
             }
 
             //reprodukcja
             if (animals.size() > 1) {
                 //kilka opcji
                 // 1. Pierwsza kompatybilna para w tablicy
-                // 2. Sortowanie animali po ich wartosciach energii i potem wariant 1 (najwyzszy z najwyzszym)
             }
 
         }
