@@ -6,10 +6,7 @@ import org.darwin_world.model.map.MapDirection;
 import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.util.Vector2D;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Simulation {
 
@@ -38,7 +35,7 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position, generateRandomGenes() , SimulationConfig) //TODO modify when animal fully implemented
+            Animal animal = new Animal(direction, position, generateRandomGenes(), SimulationConfig) //TODO modify when animal fully implemented
             // jesli zostawiamy logike ciagu symulacji po stronie zwierzeta to raczej zaminilbym te
             // kilka parametrow na 1 rekord albo podal to samo co do symulacji (SimulationConfig)
 
@@ -76,22 +73,32 @@ public class Simulation {
         growPlants();
 
         for (Map.Entry<Vector2D, List<Animal>> entry : animals.entrySet()) {
-            Vector2D position = entry.getKey();
-            List<Animal> animals = entry.getValue();
+            try {
+                Vector2D position = entry.getKey();
+                List<Animal> animals = entry.getValue();
+                Animal strongest = animals.getFirst();
 
-            //TODO scalenie w miare mozliwosci tego w 1 petle
+                //usun martwych
 
-            //jedzenie
-            if (map.plantPresent(position)) {
-                // najsilniejszy je wszystko
+                for (Animal animal : animals) {
+                    if (animal.isDead()) {
+                        map.removeAnimal(animal, position);
+                    }
+                }
+
+                //jedzenie
+                if (map.plantPresent(position)) {
+                    strongest.eat(config.plantNutritionalValue());
+                }
+
+                //reprodukcja
+                if (animals.size() > 1) {
+                    //kilka opcji
+                    // 1. Pierwsza kompatybilna para w tablicy
+                }
+            } catch (IncorrectPositionException e) {
+                System.out.println(e.getMessage());
             }
-
-            //reprodukcja
-            if (animals.size() > 1) {
-                //kilka opcji
-                // 1. Pierwsza kompatybilna para w tablicy
-            }
-
         }
         
     }

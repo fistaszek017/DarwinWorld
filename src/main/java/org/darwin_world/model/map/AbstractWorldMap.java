@@ -26,6 +26,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         if (isInBounds(position)) {
             List<Animal> objectsAtPosition = animals.computeIfAbsent(position, _ -> new ArrayList<>());
             objectsAtPosition.add(animal);
+            objectsAtPosition.sort(Comparator.comparing(Animal::getEnergy).reversed());
             return;
         }
         throw new IncorrectPositionException(position);
@@ -41,6 +42,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
         throw new IncorrectPositionException(position);
     }
+
+
 
     @Override
     public List<Animal> getAnimalsAt(Vector2D position) {
