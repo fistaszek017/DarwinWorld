@@ -12,6 +12,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2D, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2D, Object> plants = new HashMap<>();
 
+
     public AbstractWorldMap(int width, int height) {
         this.BOUNDARY = new Boundary(new Vector2D(0,0), new Vector2D(width-1,height-1), width, height);
     }
@@ -88,5 +89,10 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public Map<Vector2D, List<Animal>> getAnimalsMap() {
         return new HashMap<>(animals);
+    }
+
+    @Override
+    public Map<Vector2D, Object> getPlants() {
+        return new HashMap<>(plants);
     }
 }

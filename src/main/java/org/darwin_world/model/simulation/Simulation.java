@@ -15,10 +15,24 @@ public class Simulation {
     private final SimulationConfig config;
     private final List<Animal> animalsList = new ArrayList<>();  //contains all animals
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
+    private final int cells;
+
+
+    // statystyka
+
+    private int totalAnimals = 0;
+    private int totalPlants = 0;
+    private int freeSpaces;
+    private double energyAvg = 0.0;
+    private double avgLifeTime = 0.0;
+    private double avgChildCount = 0.0;
+
 
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
         this.config = config;
+        this.cells = config.mapHeight() * config.mapWidth();
+        this.freeSpaces = cells;
 
         initializeSimulation();
     }
