@@ -36,6 +36,10 @@ public class Animal {
         return facingDirection;
     }
 
+    public int[] getGenes() {
+        return genes;
+    }
+
     public void move(WorldMap map) {
         //TODO //zostawiam ten komentarz dla potomnych (póki co) xd
         // jak ja to widze - przekazujesz zamiar do handleMove z GlobeMap, to ci zwraca pozycje na ktora zmieniasz i potem wywolujesz move z mapy

@@ -64,9 +64,28 @@ public class Simulation {
         //
     }
 
-    private void reproduceAnimals(Animal parent1, Animal parent2)
+
+    private void reproduceAnimals(Animal first, Animal second)  // zakładam że zawsze first ma >= energie od second
     {
-        //
+        int totalEnergy = first.getEnergy() + second.getEnergy();
+
+        int firstShare = (int) ((double) first.getEnergy() / totalEnergy * config.genomeLength());
+        int secondShare = config.genomeLength() - firstShare;
+
+        int[] result = new int[config.genomeLength()];
+
+        Random rand = new Random();
+
+        if (rand.nextBoolean()) {
+            System.arraycopy(first.getGenes(), 0, result, 0, firstShare);
+            System.arraycopy(second.getGenes(), config.genomeLength() - secondShare, result, firstShare, secondShare);
+        }
+        else {
+            System.arraycopy(second.getGenes(), 0, result, 0, secondShare);
+            System.arraycopy(first.getGenes(), config.genomeLength() - firstShare, result, secondShare, firstShare);
+        }
+
+        map.placeAnimal(new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, SimulationConfig);
     }
 
     private void simulateDay() {
@@ -104,8 +123,8 @@ public class Simulation {
                         if (first.readyToReproduce() && second.readyToReproduce()) {
                             reproduceAnimals(first, second);
                         }
-
                         else break;
+
                     }
                 }
 
