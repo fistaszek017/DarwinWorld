@@ -76,6 +76,7 @@ public class Simulation {
 
         Random rand = new Random();
 
+        // baseline genes
         if (rand.nextBoolean()) {
             System.arraycopy(first.getGenes(), 0, result, 0, firstShare);
             System.arraycopy(second.getGenes(), config.genomeLength() - secondShare, result, firstShare, secondShare);
@@ -83,6 +84,19 @@ public class Simulation {
         else {
             System.arraycopy(second.getGenes(), 0, result, 0, secondShare);
             System.arraycopy(first.getGenes(), config.genomeLength() - firstShare, result, secondShare, firstShare);
+        }
+
+        // mutations (quick solution)
+        int mutations = rand.nextInt(config.minMutationCount(), config.maxMutationCount() + 1);
+        Set<Integer> used = new HashSet<>();
+
+        while (mutations > 0) {
+            Integer index = rand.nextInt(config.genomeLength());
+            if (!used.contains(index)) {
+                used.add(index);
+                result[index] = (result[index] + 1 + rand.nextInt(7) % 8);
+                mutations--;
+            }
         }
 
         map.placeAnimal(new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig);       //TODO naprawka po poprawkach animala
@@ -103,11 +117,16 @@ public class Simulation {
                 Animal strongest = animals.getFirst();
 
                 //usun martwych
-
                 for (Animal animal : animals) {
                     if (animal.isDead()) {
                         map.removeAnimal(animal, position);
                     }
+                }
+
+                //przemieszczenie
+                for (Animal animal : animals) {
+                    //zakladam ze animal bedzize wiedzial jaka ma orientacje i nastepny krok itp
+                    animal.move(map);
                 }
 
                 //jedzenie
@@ -126,7 +145,6 @@ public class Simulation {
                             reproduceAnimals(first, second);
                         }
                         else break;
-
                     }
                 }
 
