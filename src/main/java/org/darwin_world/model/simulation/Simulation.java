@@ -148,6 +148,8 @@ public class Simulation {
                     }
                 }
 
+                //nowe rosliny
+
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());
             }
