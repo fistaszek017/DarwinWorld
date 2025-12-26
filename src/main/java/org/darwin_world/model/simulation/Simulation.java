@@ -71,7 +71,7 @@ public class Simulation {
 
         int firstShare = (int) ((double) first.getEnergy() / totalEnergy * config.genomeLength());
         int secondShare = config.genomeLength() - firstShare;
-
+        int startEnergy = config.animalReproductionCost() * 2;      //TODO ?? czy tak czy nie mnożymy * 2?
         int[] result = new int[config.genomeLength()];
 
         Random rand = new Random();
@@ -85,7 +85,9 @@ public class Simulation {
             System.arraycopy(first.getGenes(), config.genomeLength() - firstShare, result, secondShare, firstShare);
         }
 
-        map.placeAnimal(new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, SimulationConfig);
+        map.placeAnimal(new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig);       //TODO naprawka po poprawkach animala
+        first.removeEnergy(config.animalReproductionCost());
+        second.removeEnergy(config.animalReproductionCost());
     }
 
     private void simulateDay() {
@@ -132,7 +134,5 @@ public class Simulation {
                 System.out.println(e.getMessage());
             }
         }
-        
     }
-
 }

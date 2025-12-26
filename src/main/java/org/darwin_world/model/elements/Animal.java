@@ -68,8 +68,12 @@ public class Animal {
         this.facingDirection = result.direction();
     }
 
-    public void eat(double nutritionalValue) {
-        //
+    public void eat(int amount) {
+        this.energy += amount;
+    }
+
+    public void removeEnergy(int amount) {
+        this.energy -= amount;
     }
 
     private int todaysDirection() {
