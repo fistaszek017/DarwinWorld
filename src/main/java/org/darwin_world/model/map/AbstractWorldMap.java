@@ -35,9 +35,16 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void removeAnimal(Animal animal, Vector2D position) throws IncorrectPositionException {
-        if (isInBounds(position) && animals.containsKey(position) && animals.get(position).contains(animal)) {
-            animals.get(position).remove(animal);
-            return;
+        if (isInBounds(position) && animals.containsKey(position)) {
+            List<Animal> animalsList = animals.get(position);
+            if (animalsList.contains(animal)) {
+                animalsList.remove(animal);
+
+                if (animalsList.isEmpty()) {
+                    animals.remove(position);
+                }
+                return;
+            }
         }
         throw new IncorrectPositionException(position);
     }
@@ -98,6 +105,12 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public int getOccupiedFieldsCount() {
-        List<Object> temp = new ArrayList<>()
+        int numberOfFields = animals.size();
+        for (Map.Entry<Vector2D, Object> entry : plants.entrySet()) {
+            if (!animals.containsKey(entry.getKey())) {
+                numberOfFields++;
+            }
+        }
+        return numberOfFields;
     }
 }
