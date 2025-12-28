@@ -193,7 +193,9 @@ public class Simulation {
         double avgLifeSpan = deadAnimalsCount == 0 ? 0.0 :
                 (double)  sumOfDeadLifeSpan / deadAnimalsCount;
 
-        //TODO freeFields
+        //TODO freeFields and most popular genome
+
+        statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, 0, avgEnergy, avgLifeSpan, avgChildren, null));
     }
 
     private void simulateDay() {
