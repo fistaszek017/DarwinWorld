@@ -149,6 +149,12 @@ public class Simulation {
             List<Animal> animalsAtPosition = entry.getValue();
 
             if (map.plantPresent(position)) {
+
+                if (animalsAtPosition.size() > 1) {
+                    animalsAtPosition.sort(Comparator.comparingInt(Animal::getEnergy)
+                            .thenComparingInt(Animal::getAge).reversed());      // sorting order: first has the most energy and is the oldest
+                }
+
                 Animal strongest = animalsAtPosition.getFirst();
                 try {
                     map.removePlant(position);
@@ -162,13 +168,13 @@ public class Simulation {
 
     private void reproduceAnimals() {
         for (List<Animal> animalsAtPosition : animalMap.values()) {
-            for (int i = 0; i < (animalsAtPosition.size() - 1); i+=2) {
+            for (int i = 0; i < (animalsAtPosition.size() - 1); i+=2) {     // assumes that all animals that can reproduce in a given cell will
                 Animal first = animalsAtPosition.get(i);
                 Animal second = animalsAtPosition.get(i + 1);
                 if (first.readyToReproduce() && second.readyToReproduce()) {
                     reproduceAnimals(first, second);
                 }
-                else break;
+                else break; // if previous pair does not meet criteria, the following pairs also won't as the list is already sorted
             }
         }
     }
@@ -200,6 +206,8 @@ public class Simulation {
         eatPlants();
         reproduceAnimals();
         growPlants();
+
+        updateStats();
 
     }
 }
