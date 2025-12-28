@@ -95,4 +95,9 @@ public abstract class AbstractWorldMap implements WorldMap {
     public Map<Vector2D, Object> getPlants() {
         return new HashMap<>(plants);
     }
+
+    @Override
+    public int getOccupiedFieldsCount() {
+        List<Object> temp = new ArrayList<>()
+    }
 }

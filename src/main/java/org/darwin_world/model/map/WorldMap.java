@@ -84,4 +84,11 @@ public interface WorldMap {
      * @return Map with all plants
      */
     Map<Vector2D, Object> getPlants();
+
+
+    /**
+     * Return the number of occupied fields on the map.
+     * @return number of occupied fields.
+     */
+    int getOccupiedFieldsCount();
 }
