@@ -72,19 +72,6 @@ public interface WorldMap {
      */
     boolean plantPresent(Vector2D position);
 
-    /**
-     * Returns all animals on a specified position, if there are none it returns an empty list
-     * @param position position to be checked
-     * @return list with all the animals on that position
-     */
-    List<Animal> getAnimalsAt(Vector2D position);
-
-
-    /**
-     * Returns all animals in a list for easy handling.
-     * @return List with all the animals.
-     */
-    List<Animal> getAllAnimals();
 
     /**
      * Return a copy of the map with all the animals in it

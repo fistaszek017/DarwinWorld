@@ -63,11 +63,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
 
     @Override
-    public List<Animal> getAnimalsAt(Vector2D position) {
-        return animals.computeIfAbsent(position, _ -> new ArrayList<>());
-    }
-
-    @Override
     public boolean plantPresent(Vector2D position) {
         return plants.containsKey(position);
     }
@@ -88,10 +83,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
 
         placeAnimal(animal, newPosition);
-    }
-
-    public List<Animal> getAllAnimals() {
-        return animals.values().stream().flatMap(List::stream).toList();
     }
 
     @Override
