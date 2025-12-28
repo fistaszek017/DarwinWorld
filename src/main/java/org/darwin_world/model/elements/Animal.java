@@ -16,6 +16,8 @@ public class Animal {
     private final int fedEnergy;
     private int day; // kurde nie wiem, wywalilbym to do innej metody, ale trochę nie wiem jak
 
+    private int childrenCount = 0;
+
     public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy, int[] genes, int lostEnergy, int reproductionEnergy, int mutationNumber, int fedEnergy) {
         this.facingDirection = facingDirection;
         this.mapPosition = mapPosition;
@@ -105,5 +107,17 @@ public class Animal {
 
     public boolean isDead() {
         return energy <= 0;
+    }
+
+    public int getAge() {
+        return day;
+    }
+
+    public void addChild() {
+        childrenCount++;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
     }
 }

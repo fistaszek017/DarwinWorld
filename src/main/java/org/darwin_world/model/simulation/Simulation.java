@@ -15,10 +15,13 @@ public class Simulation {
     private final SimulationConfig config;
     private final List<Animal> animalsList = new ArrayList<>();  //contains all animals
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
+
+    //stats
     private final int cells;
+    private int deadAnimalsCount = 0;
+    private long sumOfDeadLifeSpan = 0;
 
-
-    // statystyka
+    private final List<SimulationStatistics> statsHistory = new ArrayList<>();
 
 
     public Simulation(WorldMap map, SimulationConfig config) {
@@ -68,8 +71,7 @@ public class Simulation {
     }
 
 
-    private void reproduceAnimals(Animal first, Animal second)  // zakładam że zawsze first ma >= energie od second
-    {
+    private void reproduceAnimals(Animal first, Animal second)  { // zakładam że zawsze first ma >= energie od second
         int totalEnergy = first.getEnergy() + second.getEnergy();
 
         int firstShare = (int) ((double) first.getEnergy() / totalEnergy * config.genomeLength());
@@ -112,7 +114,9 @@ public class Simulation {
         }
 
         first.removeEnergy(config.animalReproductionCost());
+        first.addChild();
         second.removeEnergy(config.animalReproductionCost());
+        second.addChild();
     }
 
     private void removeDeadAnimals() {
@@ -120,6 +124,8 @@ public class Simulation {
         while (iterator.hasNext()) {
             Animal animal = iterator.next();
             if (animal.isDead()) {
+                deadAnimalsCount++;
+                sumOfDeadLifeSpan += animal.getAge();
                 try {
                     map.removeAnimal(animal, animal.getMapPosition());
                 } catch (IncorrectPositionException e) {
@@ -169,6 +175,19 @@ public class Simulation {
 
     private void growPlants() {
 
+    }
+
+    private void updateStats() {
+        int currentAnimalCount = animalsList.size();
+        int currentPlantCount = map.getPlants().size();
+
+        double avgEnergy = animalsList.stream().mapToInt(Animal::getEnergy).average().orElse(0.0);
+        double avgChildren = animalsList.stream().mapToInt(Animal::getChildrenCount).average().orElse(0.0);
+
+        double avgLifeSpan = deadAnimalsCount == 0 ? 0.0 :
+                (double)  sumOfDeadLifeSpan / deadAnimalsCount;
+
+        //TODO freeFields
     }
 
     private void simulateDay() {
