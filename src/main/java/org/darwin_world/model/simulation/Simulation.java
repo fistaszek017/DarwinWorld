@@ -13,7 +13,7 @@ public class Simulation {
     private int dayCount = 0;
     private final WorldMap map;
     private final SimulationConfig config;
-    private List<Animal> animalsList = new ArrayList<>();  //contains all animals
+    private final List<Animal> animalsList = new ArrayList<>();  //contains all animals
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
 
     public Simulation(WorldMap map, SimulationConfig config) {
