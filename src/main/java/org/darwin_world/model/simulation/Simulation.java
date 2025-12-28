@@ -44,8 +44,6 @@ public class Simulation {
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
             Animal animal = new Animal(direction, position, generateRandomGenes(), SimulationConfig); //TODO modify when animal fully implemented
-            // jesli zostawiamy logike ciagu symulacji po stronie zwierzeta to raczej zaminilbym te
-            // kilka parametrow na 1 rekord albo podal to samo co do symulacji (SimulationConfig)
 
             try {
                 map.placeAnimal(animal, position);
@@ -71,12 +69,12 @@ public class Simulation {
     }
 
 
-    private void reproduceAnimals(Animal first, Animal second)  { // zakładam że zawsze first ma >= energie od second
+    private void reproduceAnimals(Animal first, Animal second)  { // assuming the first animal is the stronger one
         int totalEnergy = first.getEnergy() + second.getEnergy();
 
         int firstShare = (int) ((double) first.getEnergy() / totalEnergy * config.genomeLength());
         int secondShare = config.genomeLength() - firstShare;
-        int startEnergy = config.animalReproductionCost() * 2;      //TODO ?? czy tak czy nie mnożymy * 2?
+        int startEnergy = config.animalReproductionCost() * 2;      //TODO ?? i assume this is correct, might need rethinking
         int[] result = new int[config.genomeLength()];
 
         Random rand = new Random();
