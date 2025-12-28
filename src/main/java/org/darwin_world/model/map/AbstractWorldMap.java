@@ -90,6 +90,10 @@ public abstract class AbstractWorldMap implements WorldMap {
         placeAnimal(animal, newPosition);
     }
 
+    public List<Animal> getAllAnimals() {
+        return animals.values().stream().flatMap(List::stream).toList();
+    }
+
     @Override
     public Map<Vector2D, List<Animal>> getAnimals() {
         return new HashMap<>(animals);

@@ -13,7 +13,7 @@ public class Simulation {
     private int dayCount = 0;
     private final WorldMap map;
     private final SimulationConfig config;
-    private Map<Vector2D, List<Animal>> animals = new HashMap<>();
+    private List<Animal> animalsList = new ArrayList<>();   //contains all animals
 
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
@@ -39,6 +39,7 @@ public class Simulation {
 
             try {
                 map.placeAnimal(animal, position);
+
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());
             }
@@ -46,6 +47,8 @@ public class Simulation {
 
         //TODO  plants
 
+
+        animalsList = map.getAllAnimals();
     }
 
     private int[] generateRandomGenes()
@@ -57,11 +60,6 @@ public class Simulation {
         }
 
         return geneTable;
-    }
-
-    private void growPlants()
-    {
-        //
     }
 
 
@@ -104,55 +102,35 @@ public class Simulation {
         second.removeEnergy(config.animalReproductionCost());
     }
 
+    private void removeDeadAnimals() {
+
+    }
+
+    private void moveAnimals() {
+
+    }
+
+    private void eatPlants() {
+
+    }
+
+    private void reproduceAnimals() {
+
+    }
+
+    private void growPlants() {
+
+    }
+
     private void simulateDay() {
-        animals = map.getAnimals();
+
         dayCount++;
 
+        removeDeadAnimals();
+        moveAnimals();
+        eatPlants();
+        reproduceAnimals();
         growPlants();
 
-        for (Map.Entry<Vector2D, List<Animal>> entry : animals.entrySet()) {
-            try {
-                Vector2D position = entry.getKey();
-                List<Animal> animals = entry.getValue();
-                Animal strongest = animals.getFirst();
-
-                //usun martwych
-                for (Animal animal : animals) {
-                    if (animal.isDead()) {
-                        map.removeAnimal(animal, position);
-                    }
-                }
-
-                //przemieszczenie
-                for (Animal animal : animals) {
-                    //zakladam ze animal bedzize wiedzial jaka ma orientacje i nastepny krok itp
-                    animal.move(map);
-                }
-
-                //jedzenie
-                if (map.plantPresent(position)) {
-                    strongest.eat(config.plantNutritionalValue());
-                    map.removePlant(position);
-                }
-
-                //reprodukcja
-                if (animals.size() > 1) {
-                    for (int i = 0; i < animals.size() - 1; i += 2) {
-                        Animal first = animals.get(i);
-                        Animal second = animals.get(i + 1);
-
-                        if (first.readyToReproduce() && second.readyToReproduce()) {
-                            reproduceAnimals(first, second);
-                        }
-                        else break;
-                    }
-                }
-
-                //nowe rosliny
-
-            } catch (IncorrectPositionException e) {
-                System.out.println(e.getMessage());
-            }
-        }
     }
 }

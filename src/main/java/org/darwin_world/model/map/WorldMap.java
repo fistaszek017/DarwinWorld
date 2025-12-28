@@ -79,6 +79,13 @@ public interface WorldMap {
      */
     List<Animal> getAnimalsAt(Vector2D position);
 
+
+    /**
+     * Returns all animals in a list for easy handling.
+     * @return List with all the animals.
+     */
+    List<Animal> getAllAnimals();
+
     /**
      * Return a copy of the map with all the animals in it
      * @return Map with all animals.
