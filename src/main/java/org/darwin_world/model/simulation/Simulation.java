@@ -20,19 +20,11 @@ public class Simulation {
 
     // statystyka
 
-    private int totalAnimals = 0;
-    private int totalPlants = 0;
-    private int freeSpaces;
-    private double energyAvg = 0.0;
-    private double avgLifeTime = 0.0;
-    private double avgChildCount = 0.0;
-
 
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
         this.config = config;
         this.cells = config.mapHeight() * config.mapWidth();
-        this.freeSpaces = cells;
 
         initializeSimulation();
     }
