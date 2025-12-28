@@ -96,7 +96,7 @@ public class Simulation {
             }
         }
 
-        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig) //TODO naprawka po poprawkach animala
+        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig); //TODO naprawka po poprawkach animala
 
         try {
             map.placeAnimal(child, child.getMapPosition());
