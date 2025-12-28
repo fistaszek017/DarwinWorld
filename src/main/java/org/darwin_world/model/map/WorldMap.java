@@ -90,6 +90,6 @@ public interface WorldMap {
      * Return a copy of the map with all the animals in it
      * @return Map with all animals.
      */
-    Map<Vector2D, List<Animal>> getAnimals();
+    Map<Vector2D, List<Animal>> getAnimalsMap();
 
 }

@@ -13,7 +13,8 @@ public class Simulation {
     private int dayCount = 0;
     private final WorldMap map;
     private final SimulationConfig config;
-    private List<Animal> animalsList = new ArrayList<>();   //contains all animals
+    private List<Animal> animalsList = new ArrayList<>();  //contains all animals
+    private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
 
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
@@ -39,7 +40,7 @@ public class Simulation {
 
             try {
                 map.placeAnimal(animal, position);
-
+                animalsList.add(animal);
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());
             }
@@ -47,8 +48,6 @@ public class Simulation {
 
         //TODO  plants
 
-
-        animalsList = map.getAllAnimals();
     }
 
     private int[] generateRandomGenes()
@@ -92,30 +91,74 @@ public class Simulation {
             Integer index = rand.nextInt(config.genomeLength());
             if (!used.contains(index)) {
                 used.add(index);
-                result[index] = (result[index] + 1 + rand.nextInt(7) % 8);
+                result[index] = (result[index] + 1 + rand.nextInt(7)) % 8;
                 mutations--;
             }
         }
 
-        map.placeAnimal(new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig);       //TODO naprawka po poprawkach animala
+        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig) //TODO naprawka po poprawkach animala
+
+        try {
+            map.placeAnimal(child, child.getMapPosition());
+            animalsList.add(child);
+        } catch (IncorrectPositionException e) {
+            System.out.println(e.getMessage());
+        }
+
         first.removeEnergy(config.animalReproductionCost());
         second.removeEnergy(config.animalReproductionCost());
     }
 
     private void removeDeadAnimals() {
-
+        Iterator<Animal> iterator = animalsList.iterator();
+        while (iterator.hasNext()) {
+            Animal animal = iterator.next();
+            if (animal.isDead()) {
+                try {
+                    map.removeAnimal(animal, animal.getMapPosition());
+                    iterator.remove();
+                } catch (IncorrectPositionException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
 
     private void moveAnimals() {
-
+        for (Animal animal : animalsList) {
+            animal.removeEnergy(config.animalDailyEnergyLoss());
+            animal.move(map);
+        }
     }
 
     private void eatPlants() {
+        for (Map.Entry<Vector2D, List<Animal>> entry : animalMap.entrySet()) {
+            Vector2D position = entry.getKey();
+            List<Animal> animalsAtPosition = entry.getValue();
 
+            if (map.plantPresent(position)) {
+                Animal strongest = animalsAtPosition.getFirst();
+                try {
+                    map.removePlant(position);
+                } catch (IncorrectPositionException e) {
+                    System.out.println(e.getMessage());
+                }
+                strongest.eat(config.plantNutritionalValue());
+            }
+        }
     }
 
     private void reproduceAnimals() {
-
+        for (List<Animal> animalsAtPosition : animalMap.values()) {
+            for (int i = 0; i < (animalsAtPosition.size() - 1); i+=2) {
+                Animal first = animalsAtPosition.get(i);
+                Animal second = animalsAtPosition.get(i + 1);
+                if (first.readyToReproduce() && second.readyToReproduce()) {
+                    reproduceAnimals(first, second);
+                }
+                else break;
+            }
+        }
     }
 
     private void growPlants() {
@@ -128,6 +171,7 @@ public class Simulation {
 
         removeDeadAnimals();
         moveAnimals();
+        animalMap = map.getAnimalsMap();
         eatPlants();
         reproduceAnimals();
         growPlants();

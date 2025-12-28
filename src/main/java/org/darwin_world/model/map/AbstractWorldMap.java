@@ -95,7 +95,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public Map<Vector2D, List<Animal>> getAnimals() {
+    public Map<Vector2D, List<Animal>> getAnimalsMap() {
         return new HashMap<>(animals);
     }
 }
