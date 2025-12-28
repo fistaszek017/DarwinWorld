@@ -116,10 +116,10 @@ public class Simulation {
             if (animal.isDead()) {
                 try {
                     map.removeAnimal(animal, animal.getMapPosition());
-                    iterator.remove();
                 } catch (IncorrectPositionException e) {
                     System.out.println(e.getMessage());
                 }
+                iterator.remove();
             }
         }
     }
