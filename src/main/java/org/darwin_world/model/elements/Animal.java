@@ -25,7 +25,7 @@ public class Animal {
         this.reproductionEnergy = reproductionEnergy; //energia zużywana przy reprodukcji
         this.mutationNumber = mutationNumber; //liczba mutacji
         this.fedEnergy = fedEnergy; //energia, aby zwierzak był gotowy do rozmnażania
-        this.day = 1;
+        this.day = 0;
     }
 
     public Vector2D getMapPosition() {
@@ -39,25 +39,11 @@ public class Animal {
     public void move(WorldMap map) {
         //TODO //zostawiam ten komentarz dla potomnych (póki co) xd
         // jak ja to widze - przekazujesz zamiar do handleMove z GlobeMap, to ci zwraca pozycje na ktora zmieniasz i potem wywolujesz move z mapy
-        switch (todaysDirection()) {
-            case 0: facingDirection = MapDirection.NORTH; break;
-            case 1: facingDirection = MapDirection.NORTHEAST; break;
-            case 2: facingDirection = MapDirection.EAST; break;
-            case 3: facingDirection = MapDirection.SOUTHEAST; break;
-            case 4: facingDirection = MapDirection.SOUTH; break;
-            case 5: facingDirection = MapDirection.SOUTHWEST; break;
-            case 6: facingDirection = MapDirection.WEST; break;
-            case 7: facingDirection = MapDirection.NORTHWEST; break;
-        }
+        int todaysGene = this.genes[day%genes.length];
+        this.facingDirection = this.facingDirection.rotate(todaysGene);
         MoveResult result = map.handleMove(this.mapPosition, this.facingDirection);
         this.mapPosition = result.position();
         this.facingDirection = result.direction();
-    }
-
-    private int todaysDirection() {
-        int directionToInt = this.facingDirection.getDirectionIndex();
-        int todaysGene = this.genes[day%genes.length];
-        return ((directionToInt + todaysGene)%8);
     }
 
     public void endDay() {
