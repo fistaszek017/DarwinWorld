@@ -77,7 +77,7 @@ public class Animal {
     }
 
 
-    public int[] handleMutation(int[] finalGenes){      // nie w animalu, juz w symulacji
+    public int[] handleMutation(int[] finalGenes){      // nie w animalu, juz jest w symulacji
         //losuje liczbe mutacji
         int mutationNumber = (int) ((Math.random()*(this.maxMutationNumber-this.minMutationNumber))+this.minMutationNumber);
         //losuje miejsca w genomie gdzie zwierzaki mutuja
