@@ -43,7 +43,7 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position, generateRandomGenes(), SimulationConfig); //TODO modify when animal fully implemented
+            Animal animal = new Animal(direction, position, config.initialAnimalEnergyValue(), generateRandomGenes(), config); //TODO modify when animal fully implemented
 
             try {
                 map.placeAnimal(animal, position);
@@ -102,7 +102,7 @@ public class Simulation {
             }
         }
 
-        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig); //TODO naprawka po poprawkach animala
+        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), startEnergy, result, config); //TODO naprawka po poprawkach animala
 
         try {
             map.placeAnimal(child, child.getMapPosition());
