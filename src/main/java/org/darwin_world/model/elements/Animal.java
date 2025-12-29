@@ -5,6 +5,8 @@ import org.darwin_world.model.map.MoveResult;
 import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.util.Vector2D;
 
+import java.util.Arrays;
+
 public class Animal {
     private MapDirection facingDirection;
     private Vector2D mapPosition;
@@ -50,8 +52,9 @@ public class Animal {
         //jesli pozycja na mapie jest wsrod zbioru pozycji w Simulation, to zwieksz energie o fedEnergy
     }
 
-    public void handleMutation(){
+    public int[] handleMutation(int[] finalGenes){
         //losuje liczbe mutacji
+        return finalGenes;
     }
 
     public void endDay() {
@@ -63,11 +66,35 @@ public class Animal {
         return energy >= reproductionEnergy;
     }
 
-    public boolean reproduction(Animal animal2){
+    public boolean reproduction(Animal animal2, Animal newAnimal){
         if (this.readyToReproduce() || animal2.readyToReproduce()){
             return false;
         }
-        //costam
+        int [] genes1 = this.genes;
+        int [] genes2 = animal2.genes;
+        //udzial genow w nowym genotypie
+        int animal1GenesNumber = this.energy/ (this.energy + animal2.energy);
+        int animal2GenesNumber = this.energy + animal2.energy - animal1GenesNumber;
+        //losuje strone
+        double side = Math.random()*2;
+        int[] finalGenes = new int[genes1.length];
+        if (side < 1){
+            System.arraycopy(genes1, 0, finalGenes, 0, animal1GenesNumber);
+            System.arraycopy(genes2, 0, finalGenes, animal1GenesNumber, animal2GenesNumber);
+        }
+        else{
+            System.arraycopy(genes1, 0, finalGenes, 0, animal2GenesNumber);
+            System.arraycopy(genes2, 0, finalGenes, animal2GenesNumber, animal1GenesNumber);
+        }
+        //mutacje
+        finalGenes = handleMutation(finalGenes);
+        
+        //energia na reprodukcje
+        this.energy -= reproductionEnergy;
+        animal2.energy -= reproductionEnergy;
+        //tworzy zwierzaka
+        newAnimal.energy = reproductionEnergy;
+
         return true;
     }
 
