@@ -16,9 +16,18 @@ public class Simulation {
     private final List<Animal> animalsList = new ArrayList<>();  //contains all animals
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
 
+    //stats
+    private final int cells;
+    private int deadAnimalsCount = 0;
+    private long sumOfDeadLifeSpan = 0;
+
+    private final List<SimulationStatistics> statsHistory = new ArrayList<>();
+
+
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
         this.config = config;
+        this.cells = config.mapHeight() * config.mapWidth();
 
         initializeSimulation();
     }
@@ -34,9 +43,7 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position, generateRandomGenes(), SimulationConfig); //TODO modify when animal fully implemented
-            // jesli zostawiamy logike ciagu symulacji po stronie zwierzeta to raczej zaminilbym te
-            // kilka parametrow na 1 rekord albo podal to samo co do symulacji (SimulationConfig)
+            Animal animal = new Animal(direction, position, config.initialAnimalEnergyValue(), generateRandomGenes(), config); //TODO modify when animal fully implemented
 
             try {
                 map.placeAnimal(animal, position);
@@ -62,13 +69,12 @@ public class Simulation {
     }
 
 
-    private void reproduceAnimals(Animal first, Animal second)  // zakładam że zawsze first ma >= energie od second
-    {
+    private void reproduceAnimals(Animal first, Animal second)  { // assuming the first animal is the stronger one
         int totalEnergy = first.getEnergy() + second.getEnergy();
 
         int firstShare = (int) ((double) first.getEnergy() / totalEnergy * config.genomeLength());
         int secondShare = config.genomeLength() - firstShare;
-        int startEnergy = config.animalReproductionCost() * 2;      //TODO ?? czy tak czy nie mnożymy * 2?
+        int startEnergy = config.animalReproductionCost() * 2;      //TODO ?? i assume this is correct, might need rethinking
         int[] result = new int[config.genomeLength()];
 
         Random rand = new Random();
@@ -96,7 +102,7 @@ public class Simulation {
             }
         }
 
-        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), result, startEnergy, SimulationConfig); //TODO naprawka po poprawkach animala
+        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), startEnergy, result, config); //TODO naprawka po poprawkach animala
 
         try {
             map.placeAnimal(child, child.getMapPosition());
@@ -106,7 +112,9 @@ public class Simulation {
         }
 
         first.removeEnergy(config.animalReproductionCost());
+        first.addChild();
         second.removeEnergy(config.animalReproductionCost());
+        second.addChild();
     }
 
     private void removeDeadAnimals() {
@@ -114,6 +122,8 @@ public class Simulation {
         while (iterator.hasNext()) {
             Animal animal = iterator.next();
             if (animal.isDead()) {
+                deadAnimalsCount++;
+                sumOfDeadLifeSpan += animal.getAge();
                 try {
                     map.removeAnimal(animal, animal.getMapPosition());
                 } catch (IncorrectPositionException e) {
@@ -137,6 +147,12 @@ public class Simulation {
             List<Animal> animalsAtPosition = entry.getValue();
 
             if (map.plantPresent(position)) {
+
+                if (animalsAtPosition.size() > 1) {
+                    animalsAtPosition.sort(Comparator.comparingInt(Animal::getEnergy)
+                            .thenComparingInt(Animal::getAge).reversed());      // sorting order: first has the most energy and is the oldest
+                }
+
                 Animal strongest = animalsAtPosition.getFirst();
                 try {
                     map.removePlant(position);
@@ -150,19 +166,34 @@ public class Simulation {
 
     private void reproduceAnimals() {
         for (List<Animal> animalsAtPosition : animalMap.values()) {
-            for (int i = 0; i < (animalsAtPosition.size() - 1); i+=2) {
+            for (int i = 0; i < (animalsAtPosition.size() - 1); i+=2) {     // assumes that all animals that can reproduce in a given cell will
                 Animal first = animalsAtPosition.get(i);
                 Animal second = animalsAtPosition.get(i + 1);
                 if (first.readyToReproduce() && second.readyToReproduce()) {
                     reproduceAnimals(first, second);
                 }
-                else break;
+                else break; // if previous pair does not meet criteria, the following pairs also won't as the list is already sorted
             }
         }
     }
 
     private void growPlants() {
 
+    }
+
+    private void updateStats() {
+        int currentAnimalCount = animalsList.size();
+        int currentPlantCount = map.getPlants().size();
+
+        double avgEnergy = animalsList.stream().mapToInt(Animal::getEnergy).average().orElse(0.0);
+        double avgChildren = animalsList.stream().mapToInt(Animal::getChildrenCount).average().orElse(0.0);
+
+        double avgLifeSpan = deadAnimalsCount == 0 ? 0.0 :
+                (double)  sumOfDeadLifeSpan / deadAnimalsCount;
+
+        //TODO freeFields and most popular genome
+
+        statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, 0, avgEnergy, avgLifeSpan, avgChildren, null));
     }
 
     private void simulateDay() {
@@ -175,6 +206,8 @@ public class Simulation {
         eatPlants();
         reproduceAnimals();
         growPlants();
+
+        updateStats();
 
     }
 }

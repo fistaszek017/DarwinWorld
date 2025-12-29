@@ -12,6 +12,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2D, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2D, Object> plants = new HashMap<>();
 
+
     public AbstractWorldMap(int width, int height) {
         this.BOUNDARY = new Boundary(new Vector2D(0,0), new Vector2D(width-1,height-1), width, height);
     }
@@ -26,7 +27,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         if (isInBounds(position)) {
             List<Animal> objectsAtPosition = animals.computeIfAbsent(position, _ -> new ArrayList<>());
             objectsAtPosition.add(animal);
-            objectsAtPosition.sort(Comparator.comparing(Animal::getEnergy).reversed());
             return;
         }
         throw new IncorrectPositionException(position);
@@ -34,9 +34,16 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void removeAnimal(Animal animal, Vector2D position) throws IncorrectPositionException {
-        if (isInBounds(position) && animals.containsKey(position) && animals.get(position).contains(animal)) {
-            animals.get(position).remove(animal);
-            return;
+        if (isInBounds(position) && animals.containsKey(position)) {
+            List<Animal> animalsList = animals.get(position);
+            if (animalsList.contains(animal)) {
+                animalsList.remove(animal);
+
+                if (animalsList.isEmpty()) {
+                    animals.remove(position);
+                }
+                return;
+            }
         }
         throw new IncorrectPositionException(position);
     }
@@ -88,5 +95,21 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public Map<Vector2D, List<Animal>> getAnimalsMap() {
         return new HashMap<>(animals);
+    }
+
+    @Override
+    public Map<Vector2D, Object> getPlants() {
+        return new HashMap<>(plants);
+    }
+
+    @Override
+    public int getOccupiedFieldsCount() {
+        int numberOfFields = animals.size();
+        for (Map.Entry<Vector2D, Object> entry : plants.entrySet()) {
+            if (!animals.containsKey(entry.getKey())) {
+                numberOfFields++;
+            }
+        }
+        return numberOfFields;
     }
 }

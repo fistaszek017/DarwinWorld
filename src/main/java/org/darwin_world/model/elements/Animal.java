@@ -3,7 +3,13 @@ package org.darwin_world.model.elements;
 import org.darwin_world.model.map.MapDirection;
 import org.darwin_world.model.map.MoveResult;
 import org.darwin_world.model.map.WorldMap;
+import org.darwin_world.model.simulation.SimulationConfig;
 import org.darwin_world.model.util.Vector2D;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Animal {
     private MapDirection facingDirection;
@@ -12,20 +18,25 @@ public class Animal {
     private final int[] genes; //generalnie do przekminienia - czy chcemy geny jako tablice intów czy string - ja chyba jestem za pierwszą opcją, ale nwm
     private final int lostEnergy;
     private final int reproductionEnergy;
-    private final int mutationNumber;
+    private final int minMutationNumber;
+    private final int maxMutationNumber;
     private final int fedEnergy;
-    private int day; // kurde nie wiem, wywalilbym to do innej metody, ale trochę nie wiem jak
+    private int day;
 
-    public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy, int[] genes, int lostEnergy, int reproductionEnergy, int mutationNumber, int fedEnergy) {
+    private int childrenCount = 0;
+
+    public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy ,int[] genes, SimulationConfig config) {
         this.facingDirection = facingDirection;
         this.mapPosition = mapPosition;
+        // --- WAZNE PYTANIE - czy startEnergy to to samo co reproductionEnergy ---
         this.energy = startEnergy; //energia startowa
         this.genes = genes; //geny - ich liczba
-        this.lostEnergy = lostEnergy; //energia tracona pod koniec dnia
-        this.reproductionEnergy = reproductionEnergy; //energia zużywana przy reprodukcji
-        this.mutationNumber = mutationNumber; //liczba mutacji
-        this.fedEnergy = fedEnergy; //energia, aby zwierzak był gotowy do rozmnażania
-        this.day = 1;
+        this.lostEnergy = config.animalDailyEnergyLoss(); //energia tracona pod koniec dnia ||| mozliwe ze niepotrzebne
+        this.reproductionEnergy = config.animalReproductionCost(); //energia zużywana przy reprodukcji  ||| tak samo
+        this.minMutationNumber = config.minMutationCount(); //minimalna liczba mutacji ||| tak samo
+        this.maxMutationNumber = config.maxMutationCount(); //maksymalna liczba mutacji ||| tak samo
+        this.fedEnergy = config.animalWellFedThreshold(); //energia, aby zwierzak był gotowy do rozmnażania
+        this.day = 0;
     }
 
     public Vector2D getMapPosition() {
@@ -41,20 +52,10 @@ public class Animal {
     }
 
     public void move(WorldMap map) {
-        //TODO //zostawiam ten komentarz dla potomnych (póki co) xd
-        // jak ja to widze - przekazujesz zamiar do handleMove z GlobeMap, to ci zwraca pozycje na ktora zmieniasz i potem wywolujesz move z mapy
-        switch (todaysDirection()) {
-            case 0: facingDirection = MapDirection.NORTH; break;
-            case 1: facingDirection = MapDirection.NORTHEAST; break;
-            case 2: facingDirection = MapDirection.EAST; break;
-            case 3: facingDirection = MapDirection.SOUTHEAST; break;
-            case 4: facingDirection = MapDirection.SOUTH; break;
-            case 5: facingDirection = MapDirection.SOUTHWEST; break;
-            case 6: facingDirection = MapDirection.WEST; break;
-            case 7: facingDirection = MapDirection.NORTHWEST; break;
-        }
-        Vector2D oldPosition = mapPosition;
+        int todaysGene = this.genes[day%genes.length];
+        this.facingDirection = this.facingDirection.rotate(todaysGene);
         MoveResult result = map.handleMove(this.mapPosition, this.facingDirection);
+        Vector2D oldPosition = this.mapPosition;
 
         try {
             map.move(this, oldPosition, result.position());
@@ -71,18 +72,36 @@ public class Animal {
     public void eat(int amount) {
         this.energy += amount;
     }
-
     public void removeEnergy(int amount) {
         this.energy -= amount;
     }
 
-    private int todaysDirection() {
-        int directionToInt = this.facingDirection.getDirectionIndex();
-        int todaysGene = this.genes[day%genes.length];
-        return ((directionToInt + todaysGene)%8);
+
+    public int[] handleMutation(int[] finalGenes){      // nie w animalu, juz w symulacji
+        //losuje liczbe mutacji
+        int mutationNumber = (int) ((Math.random()*(this.maxMutationNumber-this.minMutationNumber))+this.minMutationNumber);
+        //losuje miejsca w genomie gdzie zwierzaki mutuja
+        List<Integer> numbers = new ArrayList<>();
+        for (int i = 0; i <= this.genes.length; i++) {
+            numbers.add(i);
+        }
+        Collections.shuffle(numbers);
+        List<Integer> changedGenes = numbers.subList(0, mutationNumber);
+        //dla kazdej zmiany w genomie losuje nowy gen
+        for (int i=0; i<changedGenes.size();i++){
+            int newGene = (int) (Math.random()*8);
+            int x = changedGenes.get(i);
+            if (finalGenes[x] == newGene){
+                i--;
+                continue;
+            }
+            finalGenes[x] = newGene;
+        }
+        return finalGenes;
     }
 
     public void endDay() {
+        energy -= lostEnergy;
         this.day++;
     }
 
@@ -90,11 +109,35 @@ public class Animal {
         return energy >= reproductionEnergy;
     }
 
-    public boolean reproduction(Animal animal2){
+    public boolean reproduct(Animal animal2){   // niepotrzebne w animalu, logika w symulacji
         if (this.readyToReproduce() || animal2.readyToReproduce()){
             return false;
         }
-        //costam
+        int [] genes1 = this.genes;
+        int [] genes2 = animal2.genes;
+        //udzial genow w nowym genotypie
+        int animal1GenesNumber = this.energy/ (this.energy + animal2.energy);
+        int animal2GenesNumber = this.energy + animal2.energy - animal1GenesNumber;
+        //losuje strone
+        double side = Math.random()*2;
+        int[] finalGenes = new int[genes1.length];
+        if (side < 1){
+            System.arraycopy(genes1, 0, finalGenes, 0, animal1GenesNumber);
+            System.arraycopy(genes2, 0, finalGenes, animal1GenesNumber, animal2GenesNumber);
+        }
+        else{
+            System.arraycopy(genes1, 0, finalGenes, 0, animal2GenesNumber);
+            System.arraycopy(genes2, 0, finalGenes, animal2GenesNumber, animal1GenesNumber);
+        }
+        //mutacje
+        finalGenes = handleMutation(finalGenes);
+
+        //energia na reprodukcje
+        this.energy -= reproductionEnergy;
+        animal2.energy -= reproductionEnergy;
+        //tworzy zwierzaka
+        //Animal newAnimal = new Animal(this.facingDirection, this.mapPosition, reproductionEnergy, finalGenes, this.lostEnergy, this.reproductionEnergy, this.minMutationNumber, this.maxMutationNumber, this.fedEnergy);
+        /// --- TODO - dodać zwierzaka do symulacji ---
         return true;
     }
 
@@ -105,5 +148,17 @@ public class Animal {
 
     public boolean isDead() {
         return energy <= 0;
+    }
+
+    public int getAge() {
+        return day;
+    }
+
+    public void addChild() {
+        childrenCount++;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
     }
 }
