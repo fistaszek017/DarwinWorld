@@ -3,6 +3,7 @@ package org.darwin_world.model.elements;
 import org.darwin_world.model.map.MapDirection;
 import org.darwin_world.model.map.MoveResult;
 import org.darwin_world.model.map.WorldMap;
+import org.darwin_world.model.simulation.SimulationConfig;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.ArrayList;
@@ -22,17 +23,19 @@ public class Animal {
     private final int fedEnergy;
     private int day;
 
-    public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy, int[] genes, int lostEnergy, int reproductionEnergy, int minMutationNumber, int maxMutationNumber, int fedEnergy) {
+    private int childrenCount = 0;
+
+    public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy ,int[] genes, SimulationConfig config) {
         this.facingDirection = facingDirection;
         this.mapPosition = mapPosition;
         // --- WAZNE PYTANIE - czy startEnergy to to samo co reproductionEnergy ---
         this.energy = startEnergy; //energia startowa
         this.genes = genes; //geny - ich liczba
-        this.lostEnergy = lostEnergy; //energia tracona pod koniec dnia
-        this.reproductionEnergy = reproductionEnergy; //energia zużywana przy reprodukcji
-        this.minMutationNumber = minMutationNumber; //minimalna liczba mutacji
-        this.maxMutationNumber = maxMutationNumber; //maksymalna liczba mutacji
-        this.fedEnergy = fedEnergy; //energia, aby zwierzak był gotowy do rozmnażania
+        this.lostEnergy = config.animalDailyEnergyLoss(); //energia tracona pod koniec dnia ||| mozliwe ze niepotrzebne
+        this.reproductionEnergy = config.animalReproductionCost(); //energia zużywana przy reprodukcji  ||| tak samo
+        this.minMutationNumber = config.minMutationCount(); //minimalna liczba mutacji ||| tak samo
+        this.maxMutationNumber = config.maxMutationCount(); //maksymalna liczba mutacji ||| tak samo
+        this.fedEnergy = config.animalWellFedThreshold(); //energia, aby zwierzak był gotowy do rozmnażania
         this.day = 0;
     }
 
@@ -44,19 +47,37 @@ public class Animal {
         return facingDirection;
     }
 
+    public int[] getGenes() {
+        return genes;
+    }
+
     public void move(WorldMap map) {
         int todaysGene = this.genes[day%genes.length];
         this.facingDirection = this.facingDirection.rotate(todaysGene);
         MoveResult result = map.handleMove(this.mapPosition, this.facingDirection);
+        Vector2D oldPosition = this.mapPosition;
+
+        try {
+            map.move(this, oldPosition, result.position());
+        } catch (Exception e) {
+            System.out.println("Wrong move from " + oldPosition + " to " + result.position());
+            return;
+            // nie przesuwa animala
+        }
+
         this.mapPosition = result.position();
         this.facingDirection = result.direction();
     }
 
-    public void eatPlant(WorldMap map) {
-        //jesli pozycja na mapie jest wsrod zbioru pozycji w Simulation, to zwieksz energie o fedEnergy
+    public void eat(int amount) {
+        this.energy += amount;
+    }
+    public void removeEnergy(int amount) {
+        this.energy -= amount;
     }
 
-    public int[] handleMutation(int[] finalGenes){
+
+    public int[] handleMutation(int[] finalGenes){      // nie w animalu, juz jest w symulacji
         //losuje liczbe mutacji
         int mutationNumber = (int) ((Math.random()*(this.maxMutationNumber-this.minMutationNumber))+this.minMutationNumber);
         //losuje miejsca w genomie gdzie zwierzaki mutuja
@@ -88,7 +109,7 @@ public class Animal {
         return energy >= reproductionEnergy;
     }
 
-    public boolean reproduct(Animal animal2){
+    public boolean reproduct(Animal animal2){   // niepotrzebne w animalu, logika w symulacji
         if (this.readyToReproduce() || animal2.readyToReproduce()){
             return false;
         }
@@ -110,12 +131,12 @@ public class Animal {
         }
         //mutacje
         finalGenes = handleMutation(finalGenes);
-        
+
         //energia na reprodukcje
         this.energy -= reproductionEnergy;
         animal2.energy -= reproductionEnergy;
         //tworzy zwierzaka
-        Animal newAnimal = new Animal(this.facingDirection, this.mapPosition, reproductionEnergy, finalGenes, this.lostEnergy, this.reproductionEnergy, this.minMutationNumber, this.maxMutationNumber, this.fedEnergy);
+        //Animal newAnimal = new Animal(this.facingDirection, this.mapPosition, reproductionEnergy, finalGenes, this.lostEnergy, this.reproductionEnergy, this.minMutationNumber, this.maxMutationNumber, this.fedEnergy);
         /// --- TODO - dodać zwierzaka do symulacji ---
         return true;
     }
@@ -127,5 +148,17 @@ public class Animal {
 
     public boolean isDead() {
         return energy <= 0;
+    }
+
+    public int getAge() {
+        return day;
+    }
+
+    public void addChild() {
+        childrenCount++;
+    }
+
+    public int getChildrenCount() {
+        return childrenCount;
     }
 }

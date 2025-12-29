@@ -12,6 +12,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2D, List<Animal>> animals = new HashMap<>();
     protected final Map<Vector2D, Object> plants = new HashMap<>();
 
+
     public AbstractWorldMap(int width, int height) {
         this.BOUNDARY = new Boundary(new Vector2D(0,0), new Vector2D(width-1,height-1), width, height);
     }
@@ -32,6 +33,22 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public void removeAnimal(Animal animal, Vector2D position) throws IncorrectPositionException {
+        if (isInBounds(position) && animals.containsKey(position)) {
+            List<Animal> animalsList = animals.get(position);
+            if (animalsList.contains(animal)) {
+                animalsList.remove(animal);
+
+                if (animalsList.isEmpty()) {
+                    animals.remove(position);
+                }
+                return;
+            }
+        }
+        throw new IncorrectPositionException(position);
+    }
+
+    @Override
     public void placePlant(Object plant, Vector2D position) throws IncorrectPositionException {
         if (isInBounds(position)) {
             if (!plants.containsKey(position)) {
@@ -43,37 +60,56 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public List<Object> objectsAt(Vector2D position) {
-        List<Object> objects = new ArrayList<>();
-        List<Animal> animalsAtPosition = animals.get(position);
-        if (animalsAtPosition != null) {
-            objects.addAll(animalsAtPosition);
+    public void removePlant(Vector2D position) throws IncorrectPositionException {
+        if (isInBounds(position) && plants.containsKey(position)) {
+            plants.remove(position);
+            return;
         }
-
-        Object plant = plants.get(position);
-        if (plant != null) {
-            objects.add(plant);
-        }
-        return objects;
+        throw new IncorrectPositionException(position);
     }
+
 
     @Override
-    public boolean isOccupied(Vector2D position) {
-        return animals.containsKey(position) || plants.containsKey(position);
+    public boolean plantPresent(Vector2D position) {
+        return plants.containsKey(position);
     }
+
 
     @Override
     public void move(Animal animal, Vector2D oldPosition, Vector2D newPosition) throws IncorrectPositionException {
         List<Animal> objectsAtPosition = animals.get(oldPosition);
 
-        if (objectsAtPosition != null) {
+        if (objectsAtPosition != null && objectsAtPosition.contains(animal) && isInBounds(newPosition)) {
             objectsAtPosition.remove(animal);
-
             if (objectsAtPosition.isEmpty()) {
                 animals.remove(oldPosition);
             }
         }
+        else {
+            throw new IncorrectPositionException(newPosition);
+        }
 
         placeAnimal(animal, newPosition);
+    }
+
+    @Override
+    public Map<Vector2D, List<Animal>> getAnimalsMap() {
+        return new HashMap<>(animals);
+    }
+
+    @Override
+    public Map<Vector2D, Object> getPlants() {
+        return new HashMap<>(plants);
+    }
+
+    @Override
+    public int getOccupiedFieldsCount() {
+        int numberOfFields = animals.size();
+        for (Map.Entry<Vector2D, Object> entry : plants.entrySet()) {
+            if (!animals.containsKey(entry.getKey())) {
+                numberOfFields++;
+            }
+        }
+        return numberOfFields;
     }
 }

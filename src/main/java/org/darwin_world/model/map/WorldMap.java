@@ -5,6 +5,7 @@ import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.List;
+import java.util.Map;
 
 public interface WorldMap {
 
@@ -23,6 +24,28 @@ public interface WorldMap {
     void placePlant(Object plant, Vector2D position) throws IncorrectPositionException;
 
     /**
+     * places the specified number of plants on the map.
+     * @param count number of plants to place.
+     */
+    void growPlants(int count);
+
+    /**
+     * Removes an animal from the map
+     * @param animal animal to be removed
+     * @param position position the animal is at
+     * @throws IncorrectPositionException If the animal is not at the specified position
+     */
+    void removeAnimal(Animal animal, Vector2D position) throws IncorrectPositionException;
+
+
+    /**
+     * Removes a plant from the map
+     * @param position position the plant is at
+     * @throws IncorrectPositionException if the plant is not at the specified position
+     */
+    void removePlant(Vector2D position) throws IncorrectPositionException;
+
+    /**
      * Handles moving the animals around with accounting for the globe simulation.
      * @param position Current animal position.
      * @param direction Current animal move direction.
@@ -33,17 +56,13 @@ public interface WorldMap {
 
     /**
      * Moves an animal (if it is present on the map) according to specified direction.
-     * If the move is not possible, this method has no effect.
+     * If the move is not possible, this method throws an exception.
+     * @param animal animal to move.
+     * @param oldPosition current position of the animal
+     * @param newPosition the position to move the animal to
+     * @throws IncorrectPositionException when
      */
     void move(Animal animal, Vector2D oldPosition, Vector2D newPosition) throws IncorrectPositionException;
-
-    /**
-     * Return true if given position on the map is occupied.
-     *
-     * @param position Position to check.
-     * @return True if the position is occupied.
-     */
-    boolean isOccupied(Vector2D position);
 
     /**
      * Returns true if given position is out of bounds of the map.
@@ -53,11 +72,29 @@ public interface WorldMap {
     boolean isInBounds(Vector2D position);
 
     /**
-     * Return all objects currently in a given position.
-     *
-     * @param position The position to return all elements on
-     * @return List of all elements in that position..
+     * Returns true if there is a plant at the specified position
+     * @param position position to be checked
+     * @return  true if plant present
      */
-    List<Object> objectsAt(Vector2D position);
+    boolean plantPresent(Vector2D position);
 
+
+    /**
+     * Return a copy of the map with all the animals in it
+     * @return Map with all animals.
+     */
+    Map<Vector2D, List<Animal>> getAnimalsMap();
+
+    /**
+     * Return a copy of the map with all the plants in it
+     * @return Map with all plants
+     */
+    Map<Vector2D, Object> getPlants();
+
+
+    /**
+     * Return the number of occupied fields on the map.
+     * @return number of occupied fields.
+     */
+    int getOccupiedFieldsCount();
 }
