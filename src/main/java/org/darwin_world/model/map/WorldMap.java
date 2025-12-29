@@ -24,6 +24,12 @@ public interface WorldMap {
     void placePlant(Object plant, Vector2D position) throws IncorrectPositionException;
 
     /**
+     * places the specified number of plants on the map.
+     * @param count number of plants to place.
+     */
+    void growPlants(int count);
+
+    /**
      * Removes an animal from the map
      * @param animal animal to be removed
      * @param position position the animal is at

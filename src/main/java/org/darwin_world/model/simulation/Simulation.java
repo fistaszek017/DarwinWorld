@@ -2,6 +2,7 @@ package org.darwin_world.model.simulation;
 
 import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
+import org.darwin_world.model.map.Boundary;
 import org.darwin_world.model.map.MapDirection;
 import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.util.Vector2D;
@@ -15,6 +16,7 @@ public class Simulation {
     private final SimulationConfig config;
     private final List<Animal> animalsList = new ArrayList<>();  //contains all animals
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
+    Boundary jungleBoundary;
 
     //stats
     private final int cells;
@@ -53,7 +55,7 @@ public class Simulation {
             }
         }
 
-        //TODO  plants
+        map.growPlants(config.initialPlantCount());
 
     }
 
@@ -67,7 +69,6 @@ public class Simulation {
 
         return geneTable;
     }
-
 
     private void reproduceAnimals(Animal first, Animal second)  { // assuming the first animal is the stronger one
         int totalEnergy = first.getEnergy() + second.getEnergy();
@@ -177,10 +178,6 @@ public class Simulation {
         }
     }
 
-    private void growPlants() {
-
-    }
-
     private void updateStats() {
         int currentAnimalCount = animalsList.size();
         int currentPlantCount = map.getPlants().size();
@@ -205,7 +202,7 @@ public class Simulation {
         animalMap = map.getAnimalsMap();
         eatPlants();
         reproduceAnimals();
-        growPlants();
+        map.growPlants(config.plantsToSpawnEachDay());
 
         updateStats();
 
