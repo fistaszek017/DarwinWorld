@@ -14,7 +14,7 @@ public class Animal {
     private final int reproductionEnergy;
     private final int mutationNumber;
     private final int fedEnergy;
-    private int day; // kurde nie wiem, wywalilbym to do innej metody, ale trochę nie wiem jak
+    private int day;
 
     public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy, int[] genes, int lostEnergy, int reproductionEnergy, int mutationNumber, int fedEnergy) {
         this.facingDirection = facingDirection;
@@ -46,7 +46,16 @@ public class Animal {
         this.facingDirection = result.direction();
     }
 
+    public void eatPlant(WorldMap map) {
+        //jesli pozycja na mapie jest wsrod zbioru pozycji w Simulation, to zwieksz energie o fedEnergy
+    }
+
+    public void handleMutation(){
+        //losuje liczbe mutacji
+    }
+
     public void endDay() {
+        energy -= lostEnergy;
         this.day++;
     }
 
