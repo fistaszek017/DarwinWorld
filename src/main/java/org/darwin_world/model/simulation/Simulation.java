@@ -16,10 +16,8 @@ public class Simulation {
     private final SimulationConfig config;
     private final List<Animal> animalsList = new ArrayList<>();  //contains all animals
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
-    Boundary jungleBoundary;
 
     //stats
-    private final int cells;
     private int deadAnimalsCount = 0;
     private long sumOfDeadLifeSpan = 0;
 
@@ -29,7 +27,6 @@ public class Simulation {
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
         this.config = config;
-        this.cells = config.mapHeight() * config.mapWidth();
 
         initializeSimulation();
     }
