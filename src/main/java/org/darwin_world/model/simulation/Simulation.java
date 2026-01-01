@@ -21,7 +21,7 @@ public class Simulation {
     private int deadAnimalsCount = 0;
     private long sumOfDeadLifeSpan = 0;
 
-    private final List<SimulationStatistics> statsHistory = new ArrayList<>();
+    private final List<SimulationStatistics> statsHistory = new ArrayList<>();      //might need modification if simulation will be long
 
 
     public Simulation(WorldMap map, SimulationConfig config) {
@@ -134,7 +134,6 @@ public class Simulation {
 
     private void moveAnimals() {
         for (Animal animal : animalsList) {
-            animal.removeEnergy(config.animalDailyEnergyLoss());
             animal.move(map);
         }
     }
@@ -144,12 +143,12 @@ public class Simulation {
             Vector2D position = entry.getKey();
             List<Animal> animalsAtPosition = entry.getValue();
 
-            if (map.plantPresent(position)) {
+            if (animalsAtPosition.size() > 1) {
+                animalsAtPosition.sort(Comparator.comparingInt(Animal::getEnergy)
+                        .thenComparingInt(Animal::getAge).reversed());      // sorting order: first has the most energy and is the oldest
+            }
 
-                if (animalsAtPosition.size() > 1) {
-                    animalsAtPosition.sort(Comparator.comparingInt(Animal::getEnergy)
-                            .thenComparingInt(Animal::getAge).reversed());      // sorting order: first has the most energy and is the oldest
-                }
+            if (map.plantPresent(position)) {
 
                 Animal strongest = animalsAtPosition.getFirst();
                 try {
@@ -175,6 +174,12 @@ public class Simulation {
         }
     }
 
+    private void taxAnimals() {
+        for (Animal animal : animalsList) {
+            animal.endDay();
+        }
+    }
+
     private void updateStats() {
         int currentAnimalCount = animalsList.size();
         int currentPlantCount = map.getPlants().size();
@@ -190,7 +195,13 @@ public class Simulation {
         statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, 0, avgEnergy, avgLifeSpan, avgChildren, null));
     }
 
-    private void simulateDay() {
+    SimulationStatistics getLastStats() {
+        return statsHistory.getLast();
+    }
+
+
+
+    public void simulateDay() {
 
         dayCount++;
 
@@ -199,6 +210,7 @@ public class Simulation {
         animalMap = map.getAnimalsMap();
         eatPlants();
         reproduceAnimals();
+        taxAnimals();
         map.growPlants(config.plantsToSpawnEachDay());
 
         updateStats();

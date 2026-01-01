@@ -14,5 +14,6 @@ public record SimulationConfig(
         int minMutationCount,
         int maxMutationCount,
         int genomeLength,
+        int delay,
         boolean variant) {
 }
