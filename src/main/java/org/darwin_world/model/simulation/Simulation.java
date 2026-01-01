@@ -115,18 +115,22 @@ public class Simulation {
         second.addChild();
     }
 
+    private void removeAnimal(Animal animal) {
+        deadAnimalsCount++;
+        sumOfDeadLifeSpan += animal.getAge();
+        try {
+            map.removeAnimal(animal, animal.getMapPosition());
+        } catch (IncorrectPositionException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void removeDeadAnimals() {
         Iterator<Animal> iterator = animalsList.iterator();
         while (iterator.hasNext()) {
             Animal animal = iterator.next();
             if (animal.isDead()) {
-                deadAnimalsCount++;
-                sumOfDeadLifeSpan += animal.getAge();
-                try {
-                    map.removeAnimal(animal, animal.getMapPosition());
-                } catch (IncorrectPositionException e) {
-                    System.out.println(e.getMessage());
-                }
+                removeAnimal(animal);
                 iterator.remove();
             }
         }
@@ -175,8 +179,14 @@ public class Simulation {
     }
 
     private void taxAnimals() {
-        for (Animal animal : animalsList) {
+        Iterator<Animal> iterator = animalsList.iterator();
+        while (iterator.hasNext()) {
+            Animal animal = iterator.next();
             animal.endDay();
+            if (animal.isDead()) {
+                removeAnimal(animal);
+                iterator.remove();
+            }
         }
     }
 
@@ -211,6 +221,9 @@ public class Simulation {
         eatPlants();
         reproduceAnimals();
         taxAnimals();
+
+        // animal considered dead
+
         map.growPlants(config.plantsToSpawnEachDay());
 
         updateStats();
