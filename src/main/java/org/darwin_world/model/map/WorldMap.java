@@ -80,13 +80,13 @@ public interface WorldMap {
 
 
     /**
-     * Return a copy of the map with all the animals in it
+     * Return shallow a copy of the map with all the animals in it
      * @return Map with all animals.
      */
     Map<Vector2D, List<Animal>> getAnimalsMap();
 
     /**
-     * Return a copy of the map with all the plants in it
+     * Return a shallow copy of the map with all the plants in it
      * @return Map with all plants
      */
     Map<Vector2D, Object> getPlants();

@@ -7,7 +7,6 @@ import org.darwin_world.model.simulation.SimulationConfig;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class Animal {
     private final int minMutationNumber;
     private final int maxMutationNumber;
     private final int fedEnergy;
-    private int day;
+    private int age;
 
     private int childrenCount = 0;
 
@@ -31,12 +30,12 @@ public class Animal {
         // --- WAZNE PYTANIE - czy startEnergy to to samo co reproductionEnergy ---
         this.energy = startEnergy; //energia startowa
         this.genes = genes; //geny - ich liczba
-        this.lostEnergy = config.animalDailyEnergyLoss(); //energia tracona pod koniec dnia ||| mozliwe ze niepotrzebne
+        this.lostEnergy = config.animalDailyEnergyLoss(); //energia tracona pod koniec dnia
         this.reproductionEnergy = config.animalReproductionCost(); //energia zużywana przy reprodukcji  ||| tak samo
         this.minMutationNumber = config.minMutationCount(); //minimalna liczba mutacji ||| tak samo
         this.maxMutationNumber = config.maxMutationCount(); //maksymalna liczba mutacji ||| tak samo
         this.fedEnergy = config.animalWellFedThreshold(); //energia, aby zwierzak był gotowy do rozmnażania
-        this.day = 0;
+        this.age = 0;
     }
 
     public Vector2D getMapPosition() {
@@ -52,7 +51,7 @@ public class Animal {
     }
 
     public void move(WorldMap map) {
-        int todaysGene = this.genes[day%genes.length];
+        int todaysGene = this.genes[age %genes.length];
         this.facingDirection = this.facingDirection.rotate(todaysGene);
         MoveResult result = map.handleMove(this.mapPosition, this.facingDirection);
         Vector2D oldPosition = this.mapPosition;
@@ -102,12 +101,12 @@ public class Animal {
 
     public void endDay() {
         energy -= lostEnergy;
-        this.day++;
+        this.age++;
     }
 
     public boolean readyToReproduce(){
-        return energy >= reproductionEnergy;
-    }
+        return energy >= fedEnergy;
+    }       // assuming wellFedThreshold >= reproductionCost
 
     public boolean reproduct(Animal animal2){   // niepotrzebne w animalu, logika w symulacji
         if (this.readyToReproduce() || animal2.readyToReproduce()){
@@ -151,7 +150,7 @@ public class Animal {
     }
 
     public int getAge() {
-        return day;
+        return age;
     }
 
     public void addChild() {
