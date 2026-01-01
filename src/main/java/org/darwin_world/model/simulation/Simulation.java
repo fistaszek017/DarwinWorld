@@ -221,9 +221,6 @@ public class Simulation {
         eatPlants();
         reproduceAnimals();
         taxAnimals();
-
-        // animal considered dead
-
         map.growPlants(config.plantsToSpawnEachDay());
 
         updateStats();
