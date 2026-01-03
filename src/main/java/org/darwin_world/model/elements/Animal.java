@@ -16,9 +16,6 @@ public class Animal {
     private int energy;
     private final int[] genes; //generalnie do przekminienia - czy chcemy geny jako tablice intów czy string - ja chyba jestem za pierwszą opcją, ale nwm
     private final int lostEnergy;
-    private final int reproductionEnergy;
-    private final int minMutationNumber;
-    private final int maxMutationNumber;
     private final int fedEnergy;
     private int age;
 
@@ -27,13 +24,9 @@ public class Animal {
     public Animal(MapDirection facingDirection, Vector2D mapPosition, int startEnergy ,int[] genes, SimulationConfig config) {
         this.facingDirection = facingDirection;
         this.mapPosition = mapPosition;
-        // --- WAZNE PYTANIE - czy startEnergy to to samo co reproductionEnergy ---
         this.energy = startEnergy; //energia startowa
         this.genes = genes; //geny - ich liczba
         this.lostEnergy = config.animalDailyEnergyLoss(); //energia tracona pod koniec dnia
-        this.reproductionEnergy = config.animalReproductionCost(); //energia zużywana przy reprodukcji  ||| tak samo
-        this.minMutationNumber = config.minMutationCount(); //minimalna liczba mutacji ||| tak samo
-        this.maxMutationNumber = config.maxMutationCount(); //maksymalna liczba mutacji ||| tak samo
         this.fedEnergy = config.animalWellFedThreshold(); //energia, aby zwierzak był gotowy do rozmnażania
         this.age = 0;
     }
@@ -74,31 +67,6 @@ public class Animal {
     public void removeEnergy(int amount) {
         this.energy -= amount;
     }
-
-
-    public int[] handleMutation(int[] finalGenes){      // nie w animalu, juz jest w symulacji
-        //losuje liczbe mutacji
-        int mutationNumber = (int) ((Math.random()*(this.maxMutationNumber-this.minMutationNumber))+this.minMutationNumber);
-        //losuje miejsca w genomie gdzie zwierzaki mutuja
-        List<Integer> numbers = new ArrayList<>();
-        for (int i = 0; i <= this.genes.length; i++) {
-            numbers.add(i);
-        }
-        Collections.shuffle(numbers);
-        List<Integer> changedGenes = numbers.subList(0, mutationNumber);
-        //dla kazdej zmiany w genomie losuje nowy gen
-        for (int i=0; i<changedGenes.size();i++){
-            int newGene = (int) (Math.random()*8);
-            int x = changedGenes.get(i);
-            if (finalGenes[x] == newGene){
-                i--;
-                continue;
-            }
-            finalGenes[x] = newGene;
-        }
-        return finalGenes;
-    }
-
     public void endDay() {
         energy -= lostEnergy;
         this.age++;
@@ -107,38 +75,6 @@ public class Animal {
     public boolean readyToReproduce(){
         return energy >= fedEnergy;
     }       // assuming wellFedThreshold >= reproductionCost
-
-    public boolean reproduct(Animal animal2){   // niepotrzebne w animalu, logika w symulacji
-        if (this.readyToReproduce() || animal2.readyToReproduce()){
-            return false;
-        }
-        int [] genes1 = this.genes;
-        int [] genes2 = animal2.genes;
-        //udzial genow w nowym genotypie
-        int animal1GenesNumber = this.energy/ (this.energy + animal2.energy);
-        int animal2GenesNumber = this.energy + animal2.energy - animal1GenesNumber;
-        //losuje strone
-        double side = Math.random()*2;
-        int[] finalGenes = new int[genes1.length];
-        if (side < 1){
-            System.arraycopy(genes1, 0, finalGenes, 0, animal1GenesNumber);
-            System.arraycopy(genes2, 0, finalGenes, animal1GenesNumber, animal2GenesNumber);
-        }
-        else{
-            System.arraycopy(genes1, 0, finalGenes, 0, animal2GenesNumber);
-            System.arraycopy(genes2, 0, finalGenes, animal2GenesNumber, animal1GenesNumber);
-        }
-        //mutacje
-        finalGenes = handleMutation(finalGenes);
-
-        //energia na reprodukcje
-        this.energy -= reproductionEnergy;
-        animal2.energy -= reproductionEnergy;
-        //tworzy zwierzaka
-        //Animal newAnimal = new Animal(this.facingDirection, this.mapPosition, reproductionEnergy, finalGenes, this.lostEnergy, this.reproductionEnergy, this.minMutationNumber, this.maxMutationNumber, this.fedEnergy);
-        /// --- TODO - dodać zwierzaka do symulacji ---
-        return true;
-    }
 
     public int getEnergy() {
         return energy;
