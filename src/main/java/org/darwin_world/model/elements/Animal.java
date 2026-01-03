@@ -73,7 +73,7 @@ public class Animal {
     }
 
     public boolean readyToReproduce(){
-        return energy >= fedEnergy;
+        return energy >= fedEnergy && energy >= 2 * lostEnergy;
     }       // assuming wellFedThreshold >= reproductionCost
 
     public int getEnergy() {
@@ -96,4 +96,15 @@ public class Animal {
     public int getChildrenCount() {
         return childrenCount;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this);
+    }
+
 }
