@@ -2,7 +2,6 @@ package org.darwin_world.model.simulation;
 
 import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
-import org.darwin_world.model.map.Boundary;
 import org.darwin_world.model.map.MapDirection;
 import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.util.Vector2D;
@@ -18,8 +17,10 @@ public class Simulation {
     private Map<Vector2D, List<Animal>> animalMap = new HashMap<>();
 
     //stats
+    private final int cellCount;
     private int deadAnimalsCount = 0;
     private long sumOfDeadLifeSpan = 0;
+    private final Map<List<Integer>, Integer> genomeCount = new HashMap<>();
 
     private final List<SimulationStatistics> statsHistory = new ArrayList<>();      //might need modification if simulation will be long
 
@@ -27,6 +28,8 @@ public class Simulation {
     public Simulation(WorldMap map, SimulationConfig config) {
         this.map = map;
         this.config = config;
+
+        this.cellCount = config.mapWidth() * config.mapHeight();
 
         initializeSimulation();
     }
@@ -47,6 +50,7 @@ public class Simulation {
             try {
                 map.placeAnimal(animal, position);
                 animalsList.add(animal);
+                updateGenomesPopularityList(animal.getGenes(), 1);
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());
             }
@@ -65,6 +69,15 @@ public class Simulation {
         }
 
         return geneTable;
+    }
+
+    private void updateGenomesPopularityList(int[] genes, int change) {
+        List<Integer> genesList = Arrays.stream(genes).boxed().toList();
+        genomeCount.merge(genesList, change, Integer::sum);
+
+        if (genomeCount.get(genesList) <= 0) {
+            genomeCount.remove(genesList);
+        }
     }
 
     private void reproduceAnimals(Animal first, Animal second)  { // assuming the first animal is the stronger one
@@ -105,6 +118,7 @@ public class Simulation {
         try {
             map.placeAnimal(child, child.getMapPosition());
             animalsList.add(child);
+            updateGenomesPopularityList(result, 1);
         } catch (IncorrectPositionException e) {
             System.out.println(e.getMessage());
         }
@@ -120,6 +134,7 @@ public class Simulation {
         sumOfDeadLifeSpan += animal.getAge();
         try {
             map.removeAnimal(animal, animal.getMapPosition());
+            updateGenomesPopularityList(animal.getGenes(), -1);
         } catch (IncorrectPositionException e) {
             System.out.println(e.getMessage());
         }
@@ -200,9 +215,12 @@ public class Simulation {
         double avgLifeSpan = deadAnimalsCount == 0 ? 0.0 :
                 (double)  sumOfDeadLifeSpan / deadAnimalsCount;
 
-        //TODO freeFields and most popular genome
+        int freeFields = cellCount - map.getOccupiedFieldsCount();
 
-        statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, 0, avgEnergy, avgLifeSpan, avgChildren, null));
+        List<Integer> genomeList = genomeCount.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(new ArrayList<>());
+        int[] mostPopularGenome = genomeList.stream().mapToInt(Integer::intValue).toArray();
+
+        statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, freeFields, avgEnergy, avgLifeSpan, avgChildren, mostPopularGenome));
     }
 
     SimulationStatistics getLastStats() {
