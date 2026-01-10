@@ -12,8 +12,6 @@ public class GlobeMap extends AbstractWorldMap{
     private final int jungleBottom;
     private final int jungleTop;
 
-    private final Boundary jungleBoundary;
-
     public GlobeMap(int width, int height) {
         super(width, height);
 
@@ -22,7 +20,6 @@ public class GlobeMap extends AbstractWorldMap{
         int normalRows = height - jungleHeight;
         this.jungleBottom = normalRows / 2;
         this.jungleTop = jungleBottom + jungleHeight;
-        this.jungleBoundary = new Boundary(new Vector2D(0, jungleBottom), new Vector2D(super.BOUNDARY.width() -1, jungleTop -1), -1, -1);   //width height placeholder
     }
 
     @Override
