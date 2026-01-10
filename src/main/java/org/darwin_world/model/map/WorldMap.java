@@ -1,6 +1,7 @@
 package org.darwin_world.model.map;
 
 import org.darwin_world.model.elements.Animal;
+import org.darwin_world.model.elements.Plant;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.util.Vector2D;
 
@@ -21,7 +22,7 @@ public interface WorldMap {
      * @param position The position to placeAnimal the plant at.
      * @param plant The plant to be placed on the map.
      */
-    void placePlant(Object plant, Vector2D position) throws IncorrectPositionException;
+    void placePlant(Plant plant, Vector2D position) throws IncorrectPositionException;
 
     /**
      * places the specified number of plants on the map.
@@ -89,7 +90,7 @@ public interface WorldMap {
      * Return a shallow copy of the map with all the plants in it
      * @return Map with all plants
      */
-    Map<Vector2D, Object> getPlants();
+    Map<Vector2D, Plant> getPlants();
 
 
     /**
