@@ -1,6 +1,7 @@
 package org.darwin_world.model.map;
 
 import org.darwin_world.model.elements.Animal;
+import org.darwin_world.model.elements.Plant;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.util.Vector2D;
 
@@ -10,7 +11,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     protected final Boundary BOUNDARY;
     protected final Map<Vector2D, List<Animal>> animals = new HashMap<>();
-    protected final Map<Vector2D, Object> plants = new HashMap<>();
+    protected final Map<Vector2D, Plant> plants = new HashMap<>();
 
 
     public AbstractWorldMap(int width, int height) {
@@ -49,7 +50,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void placePlant(Object plant, Vector2D position) throws IncorrectPositionException {
+    public void placePlant(Plant plant, Vector2D position) throws IncorrectPositionException {
         if (isInBounds(position)) {
             if (!plants.containsKey(position)) {
                 plants.put(position, plant);
@@ -98,14 +99,14 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public Map<Vector2D, Object> getPlants() {
+    public Map<Vector2D, Plant> getPlants() {
         return new HashMap<>(plants);
     }
 
     @Override
     public int getOccupiedFieldsCount() {
         int numberOfFields = animals.size();
-        for (Map.Entry<Vector2D, Object> entry : plants.entrySet()) {
+        for (Map.Entry<Vector2D, Plant> entry : plants.entrySet()) {
             if (!animals.containsKey(entry.getKey())) {
                 numberOfFields++;
             }
