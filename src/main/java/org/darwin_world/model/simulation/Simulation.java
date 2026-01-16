@@ -57,7 +57,7 @@ public class Simulation {
         }
 
         map.growPlants(config.initialPlantCount());
-
+        updateStats();
     }
 
     private int[] generateRandomGenes()
@@ -223,7 +223,7 @@ public class Simulation {
         statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, freeFields, avgEnergy, avgLifeSpan, avgChildren, mostPopularGenome));
     }
 
-    SimulationStatistics getLastStats() {
+    public SimulationStatistics getLastStats() {
         return statsHistory.getLast();
     }
 
