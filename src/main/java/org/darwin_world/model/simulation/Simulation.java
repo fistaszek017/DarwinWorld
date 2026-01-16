@@ -164,7 +164,7 @@ public class Simulation {
 
             if (animalsAtPosition.size() > 1) {
                 animalsAtPosition.sort(Comparator.comparingInt(Animal::getEnergy)
-                        .thenComparingInt(Animal::getAge).reversed());      // sorting order: first has the most energy and is the oldest
+                        .thenComparingInt(Animal::getAge).thenComparingInt(Animal::getChildrenCount).reversed());      // sorting order: first has the most energy and is the oldest
             }
 
             if (map.plantPresent(position)) {
