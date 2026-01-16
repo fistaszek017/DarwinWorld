@@ -106,5 +106,4 @@ public class Animal {
     public int hashCode() {
         return System.identityHashCode(this);
     }
-
 }
