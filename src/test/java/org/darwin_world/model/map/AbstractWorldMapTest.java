@@ -16,7 +16,7 @@ class AbstractWorldMapTest {
 
 
     private static AbstractWorldMap createMap() {
-        return new AbstractWorldMap(config.mapWidth(), config.mapHeight()) {
+        return new AbstractWorldMap(config) {
             @Override
             public void growPlants(int count) {
                 return;
@@ -44,7 +44,11 @@ class AbstractWorldMapTest {
             2,
             5,
             500,
-            false
+            false,
+            0,
+            0,
+            0,
+            0
     );
 
     @Test
@@ -101,7 +105,7 @@ class AbstractWorldMapTest {
         AbstractWorldMap map = createMap();
         Vector2D position = new Vector2D(0,0);
 
-        Plant p1 = new Plant(position);
+        Plant p1 = new Plant(position,1);
 
         //when & then
         assertDoesNotThrow(() -> map.placePlant(p1, position));
@@ -116,7 +120,7 @@ class AbstractWorldMapTest {
         //given
         AbstractWorldMap map = createMap();
         Vector2D position = new Vector2D(0,0);
-        Plant p1 = new Plant(position);
+        Plant p1 = new Plant(position,1);
         assertDoesNotThrow(() -> map.placePlant(p1, position));
 
         //when & then

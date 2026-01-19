@@ -2,6 +2,7 @@ package org.darwin_world.model.map;
 
 import org.darwin_world.model.elements.Plant;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
+import org.darwin_world.model.simulation.SimulationConfig;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.Random;
@@ -12,12 +13,12 @@ public class GlobeMap extends AbstractWorldMap{
     private final int jungleBottom;
     private final int jungleTop;
 
-    public GlobeMap(int width, int height) {
-        super(width, height);
+    public GlobeMap(SimulationConfig config) {
+        super(config);
 
-        int jungleHeight = (int) (height * 0.2);
+        int jungleHeight = (int) (config.mapHeight() * 0.2);
 
-        int normalRows = height - jungleHeight;
+        int normalRows = config.mapHeight() - jungleHeight;
         this.jungleBottom = normalRows / 2;
         this.jungleTop = jungleBottom + jungleHeight;
     }
@@ -53,7 +54,7 @@ public class GlobeMap extends AbstractWorldMap{
 
                 if (!super.plantPresent(position)) {
                     try {
-                        super.placePlant(new Plant(position), position);
+                        super.placePlant(new Plant(position,1), position);
                         planted = true;
                     } catch (IncorrectPositionException e) {
                         System.out.println(e.getMessage());
@@ -62,24 +63,4 @@ public class GlobeMap extends AbstractWorldMap{
             }
         }
     }
-
-    public MoveResult handleMove(Vector2D position, MapDirection direction) {
-
-        Vector2D moveVector = direction.getVector();
-        Vector2D intendedPosition = position.add(moveVector);
-
-        if (intendedPosition.y() >= BOUNDARY.height() || intendedPosition.y() < 0) {
-            int newX = (BOUNDARY.width() - 1) - position.x();
-            int newY = position.y();
-
-            MapDirection newDirection = direction.rotate(4);
-
-            return new MoveResult(new Vector2D(newX, newY), newDirection);
-        }
-
-        int correctedX = ((intendedPosition.x() % BOUNDARY.width()) + BOUNDARY.width()) % BOUNDARY.width();
-        Vector2D finalPosition = new Vector2D(correctedX, intendedPosition.y());
-        return new MoveResult(finalPosition, direction);
-    }
-
 }

@@ -25,16 +25,20 @@ class SimulationTest {
             2,
             5,
             500,
-            false
+            false,
+            0,
+            0,
+            0,
+            0
     );
 
     @Test
     void simulationInitializationCorrect() {
         //given
-        GlobeMap map = new GlobeMap(config.mapWidth(), config.mapHeight());
+        GlobeMap map = new GlobeMap(config);
 
         //when
-        Simulation simulation = new Simulation(map, config);
+        Simulation simulation = new Simulation(map, config,1);
 
         //then
         Map<Vector2D, Plant> plants = map.getPlants();

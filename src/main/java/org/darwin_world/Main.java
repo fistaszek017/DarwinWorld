@@ -22,7 +22,11 @@ public class Main {
                 2,
                 5,
                 500,
-                false
+                true,
+                1,
+                1,
+                1,
+                1
         );
 
 

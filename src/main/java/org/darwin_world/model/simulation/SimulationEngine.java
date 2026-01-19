@@ -1,6 +1,7 @@
 package org.darwin_world.model.simulation;
 
 import org.darwin_world.model.map.GlobeMap;
+import org.darwin_world.model.map.VariantMap;
 import org.darwin_world.model.map.WorldMap;
 
 import java.util.ArrayList;
@@ -17,11 +18,10 @@ public class SimulationEngine implements Runnable{
 
     public SimulationEngine(SimulationConfig config, int id) {
         if (config.variant()) {
-            //TODO mapa z wariantu
-            throw new IllegalArgumentException("Variant not yet implemented");
+            this.map = new VariantMap(config);
         }
         else {
-            this.map = new GlobeMap(config.mapWidth(), config.mapHeight());
+            this.map = new GlobeMap(config);
         }
         this.simulation = new Simulation(map, config, id);
         this.delay = config.delay();

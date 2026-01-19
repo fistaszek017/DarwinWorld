@@ -15,5 +15,10 @@ public record SimulationConfig(
         int maxMutationCount,
         int genomeLength,
         int delay,
-        boolean variant) {
+        boolean variant,
+        //dotyczy tylko variantu
+        int cultivationEnergyThreshold,
+        int fertileSoilThreshold,
+        int fertileSoilDuration,
+        int largePlantCapacity) {
 }
