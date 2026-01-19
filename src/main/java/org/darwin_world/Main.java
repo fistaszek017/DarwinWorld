@@ -22,11 +22,15 @@ public class Main {
                 2,
                 5,
                 500,
-                false
+                true,
+                1,
+                1,
+                1,
+                1
         );
 
 
-        SimulationEngine engine = new SimulationEngine(config);
+        SimulationEngine engine = new SimulationEngine(config,1);
 
         engine.addObserver(((stats, map) -> {
             System.out.println("Dzien: " + stats.day() + " Anim: " + stats.animalCount() + " Plnt: " + stats.plantCount());

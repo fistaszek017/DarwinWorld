@@ -3,6 +3,7 @@ package org.darwin_world.model.map;
 import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.elements.Plant;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
+import org.darwin_world.model.simulation.SimulationConfig;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.*;
@@ -14,8 +15,8 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2D, Plant> plants = new HashMap<>();
 
 
-    public AbstractWorldMap(int width, int height) {
-        this.BOUNDARY = new Boundary(new Vector2D(0,0), new Vector2D(width-1,height-1), width, height);
+    public AbstractWorldMap(SimulationConfig config) {
+        this.BOUNDARY = new Boundary(new Vector2D(0,0), new Vector2D(config.mapWidth()-1,config.mapHeight()-1), config.mapWidth(), config.mapHeight());
     }
 
     @Override
@@ -112,5 +113,25 @@ public abstract class AbstractWorldMap implements WorldMap {
             }
         }
         return numberOfFields;
+    }
+
+    @Override
+    public MoveResult handleMove(Vector2D position, MapDirection direction) {
+
+        Vector2D moveVector = direction.getVector();
+        Vector2D intendedPosition = position.add(moveVector);
+
+        if (intendedPosition.y() >= BOUNDARY.height() || intendedPosition.y() < 0) {
+            int newX = (BOUNDARY.width() - 1) - position.x();
+            int newY = position.y();
+
+            MapDirection newDirection = direction.rotate(4);
+
+            return new MoveResult(new Vector2D(newX, newY), newDirection);
+        }
+
+        int correctedX = ((intendedPosition.x() % BOUNDARY.width()) + BOUNDARY.width()) % BOUNDARY.width();
+        Vector2D finalPosition = new Vector2D(correctedX, intendedPosition.y());
+        return new MoveResult(finalPosition, direction);
     }
 }

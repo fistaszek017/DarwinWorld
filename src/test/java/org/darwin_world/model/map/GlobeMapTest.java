@@ -24,13 +24,17 @@ class GlobeMapTest {
             2,
             5,
             500,
-            false
+            false,
+            0,
+            0,
+            0,
+            0
     );
 
     @Test
     void isAmountOfGeneratedPlantsCorrect() {
         //given
-        GlobeMap map = new GlobeMap(config.mapWidth(), config.mapHeight());
+        GlobeMap map = new GlobeMap(config);
 
         //when
         map.growPlants(10);
@@ -42,7 +46,7 @@ class GlobeMapTest {
     @Test
     void isMoveHandlingCorrect() {
         //given
-        GlobeMap map = new GlobeMap(config.mapWidth(), config.mapHeight());
+        GlobeMap map = new GlobeMap(config);
 
         Animal a1 = new Animal(MapDirection.NORTH, new Vector2D(9,9), 67, new int[]{0} , config);   // going around the pole vertically
         Animal a2 = new Animal(MapDirection.EAST, new Vector2D(9,9), 67, new int[]{0} , config);    // wrapping around the globe horizontally

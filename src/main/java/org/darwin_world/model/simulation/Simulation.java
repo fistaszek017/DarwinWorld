@@ -4,12 +4,14 @@ import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.exceptions.IncorrectPositionException;
 import org.darwin_world.model.map.MapDirection;
 import org.darwin_world.model.map.WorldMap;
+import org.darwin_world.model.util.StatsFileManager;
 import org.darwin_world.model.util.Vector2D;
 
 import java.util.*;
 
 public class Simulation {
 
+    private final int id;
     private int dayCount = 0;
     private final WorldMap map;
     private final SimulationConfig config;
@@ -24,10 +26,13 @@ public class Simulation {
 
     private final List<SimulationStatistics> statsHistory = new ArrayList<>();      //might need modification if simulation will be long
 
+    private final StatsFileManager statsWriter;
 
-    public Simulation(WorldMap map, SimulationConfig config) {
+    public Simulation(WorldMap map, SimulationConfig config, int id) {
         this.map = map;
         this.config = config;
+        this.id = id;
+        this.statsWriter = new StatsFileManager(id);
 
         this.cellCount = config.mapWidth() * config.mapHeight();
 
@@ -57,7 +62,7 @@ public class Simulation {
         }
 
         map.growPlants(config.initialPlantCount());
-
+        updateStats();
     }
 
     private int[] generateRandomGenes()
@@ -220,10 +225,13 @@ public class Simulation {
         List<Integer> genomeList = genomeCount.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(new ArrayList<>());
         int[] mostPopularGenome = genomeList.stream().mapToInt(Integer::intValue).toArray();
 
-        statsHistory.add(new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, freeFields, avgEnergy, avgLifeSpan, avgChildren, mostPopularGenome));
+        SimulationStatistics dailyStats = new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, freeFields, avgEnergy, avgLifeSpan, avgChildren, mostPopularGenome);
+
+        statsHistory.add(dailyStats);
+        statsWriter.saveStat(dailyStats);
     }
 
-    SimulationStatistics getLastStats() {
+    public SimulationStatistics getLastStats() {
         return statsHistory.getLast();
     }
 
