@@ -9,14 +9,13 @@ import java.util.List;
 public class SimulationEngine implements Runnable{
 
     private final Simulation simulation;
-    SimulationConfig config;
-    WorldMap map;
+    private final WorldMap map;
     private final List<SimulationChangeListener> simulationChangeListeners = new ArrayList<SimulationChangeListener>();
     private volatile boolean running = false;
 
     private final int delay; // ms
 
-    public SimulationEngine(SimulationConfig config) {
+    public SimulationEngine(SimulationConfig config, int id) {
         if (config.variant()) {
             //TODO mapa z wariantu
             throw new IllegalArgumentException("Variant not yet implemented");
@@ -24,7 +23,7 @@ public class SimulationEngine implements Runnable{
         else {
             this.map = new GlobeMap(config.mapWidth(), config.mapHeight());
         }
-        this.simulation = new Simulation(map, config);
+        this.simulation = new Simulation(map, config, id);
         this.delay = config.delay();
     }
 

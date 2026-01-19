@@ -26,7 +26,7 @@ public class Main {
         );
 
 
-        SimulationEngine engine = new SimulationEngine(config);
+        SimulationEngine engine = new SimulationEngine(config,1);
 
         engine.addObserver(((stats, map) -> {
             System.out.println("Dzien: " + stats.day() + " Anim: " + stats.animalCount() + " Plnt: " + stats.plantCount());
