@@ -6,7 +6,10 @@
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.darwin_world.StartController"
-      spacing="10">
+      spacing="10"
+      minWidth="450"
+      minHeight="750"
+        >
 
     <Label text="Simulation Configuration" style="-fx-font-size: 18px;"/>
 
@@ -26,12 +29,12 @@
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Wartość odżywcza roślin: "/>
+        <Label text="Wartość odżywcza roślin:"/>
         <TextField fx:id="plantNutritionalValue" promptText="5"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Liczba roślin pojawiających się każdego dnia: "/>
+        <Label text="Liczba roślin pojawiających się każdego dnia:"/>
         <TextField fx:id="plantsToSpawnEachDay" promptText="2"/>
     </HBox>
 
@@ -46,41 +49,68 @@
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Energia tracona każdego dnia przez zwierzęta "/>
+        <Label text="Energia tracona każdego dnia przez zwierzęta:"/>
         <TextField fx:id="animalDailyEnergyLoss" promptText="1"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Próg dobrego odżywienia zwierzęcia: "/>
+        <Label text="Próg dobrego odżywienia zwierzęcia:"/>
         <TextField fx:id="animalWellFedThreshold" promptText="10"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Koszt reprodukcji zwierząt: "/>
+        <Label text="Koszt reprodukcji zwierząt:"/>
         <TextField fx:id="animalReproductionCost" promptText="5"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Minimalna liczba mutacji: "/>
+        <Label text="Minimalna liczba mutacji:"/>
         <TextField fx:id="minMutationCount" promptText="0"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Maksymalna liczba mutacji: "/>
+        <Label text="Maksymalna liczba mutacji:"/>
         <TextField fx:id="maxMutationCount" promptText="2"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Długość genomu: "/>
+        <Label text="Długość genomu:"/>
         <TextField fx:id="genomeLength" promptText="5"/>
     </HBox>
 
     <HBox spacing="10">
-        <Label text="Opóźnienie symulacji: "/>
+        <Label text="Opóźnienie symulacji:"/>
         <TextField fx:id="delay" promptText="500"/>
     </HBox>
 
     <!-- Tutaj jeszcze do ogarnięcia wariant -->
+    <HBox spacing="10">
+        <CheckBox fx:id="variantEnabled" text="Wariant: Uprawianie Ziemi" onAction="#onVariantToggle"/>
+    </HBox>
+
+    <VBox fx:id="variantBox" spacing="10" visible="false" managed="false">
+        <HBox spacing="10">
+            <Label text="Minimalna ilość energii do rozpoczęcia uprawy:"/>
+            <TextField fx:id="cultivationEnergyThreshold" promptText="1"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Minimalny poziom żyzności gleby:"/>
+            <TextField fx:id="fertileSoilThreshold" promptText="1"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Czas żyzności gleby:"/>
+            <TextField fx:id="fertileSoilDuration" promptText="1"/>
+        </HBox>
+
+        <HBox spacing="10">
+            <Label text="Liczba dużych roślin:"/>
+            <TextField fx:id="largePlantCapacity" promptText="1"/>
+        </HBox>
+    </VBox>
+
+
 
 
     <Button text="Start Simulation" onAction="#onStart"/>
