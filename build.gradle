@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
@@ -10,15 +11,22 @@ repositories {
     mavenCentral()
 }
 
-javafx {
-    version = "21"
-    modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+javafx {
+    version = "25"
+    modules = [
+            'javafx.controls',
+            'javafx.fxml'
+    ]
+}
+
+application {
+    mainClass = 'org.darwin_world.MainGUI'
 }
 
 test {

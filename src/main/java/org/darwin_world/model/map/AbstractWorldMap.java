@@ -134,4 +134,15 @@ public abstract class AbstractWorldMap implements WorldMap {
         Vector2D finalPosition = new Vector2D(correctedX, intendedPosition.y());
         return new MoveResult(finalPosition, direction);
     }
+
+    @Override
+    public int getWidth() {
+        return BOUNDARY.width();
+    }
+
+    @Override
+    public int getHeight() {
+        return BOUNDARY.height();
+    }
+
 }
