@@ -98,4 +98,7 @@ public interface WorldMap {
      * @return number of occupied fields.
      */
     int getOccupiedFieldsCount();
+
+    int getWidth();
+    int getHeight();
 }

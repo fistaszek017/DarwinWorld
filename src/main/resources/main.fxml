@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.darwin_world.MainController">
+
+    <top>
+        <HBox spacing="10">
+            <Button text="Start" onAction="#onStart"/>
+            <Button text="Stop" onAction="#onStop"/>
+            <Button text="Next Day" onAction="#onNextDay"/>
+        </HBox>
+    </top>
+
+    <center>
+        <Canvas fx:id="canvas" width="800" height="800"/>
+    </center>
+
+    <bottom>
+        <Label fx:id="statsLabel"/>
+    </bottom>
+
+</BorderPane>
