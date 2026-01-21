@@ -33,4 +33,7 @@ public class Plant {
         return position.hashCode();
     }
 
+    public int getUses() {
+        return uses;
+    }
 }
