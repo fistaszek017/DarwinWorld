@@ -62,4 +62,7 @@ public class SimulationEngine implements Runnable{
     }
 
 
+    public WorldMap getMap() {
+        return map;
+    }
 }

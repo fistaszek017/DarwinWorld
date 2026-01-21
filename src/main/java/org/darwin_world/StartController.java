@@ -101,7 +101,8 @@ public class StartController {
             Scene scene = new Scene(loader.load());
 
             MainController controller = loader.getController();
-            controller.init(simulation, map, config);
+            int id = 1;
+            controller.init(config, id);
 
             Stage stage = new Stage();
             stage.setScene(scene);
