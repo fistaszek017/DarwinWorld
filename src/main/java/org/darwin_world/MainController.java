@@ -1,64 +1,62 @@
 package org.darwin_world;
 
-import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 
 import org.darwin_world.model.map.WorldMap;
-import org.darwin_world.model.simulation.Simulation;
-import org.darwin_world.model.simulation.SimulationConfig;
+import org.darwin_world.model.simulation.*;
 
-public class MainController {
+public class MainController implements SimulationChangeListener {
 
     @FXML private Canvas canvas;
     @FXML private Label statsLabel;
 
-    private Simulation simulation;
+    private SimulationEngine engine;
     private SimulationRenderer renderer;
 
-    private AnimationTimer timer;
-    private boolean running = false;
+    private Thread engineThread;
 
-    public void init(Simulation simulation, WorldMap map, SimulationConfig config) {
-        this.simulation = simulation;
+    public void init(SimulationConfig config, int id) {
+        this.engine = new SimulationEngine(config, id);
+        WorldMap map = engine.getMap();
+
         this.renderer = new SimulationRenderer(canvas, map);
 
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if (running) {
-                    simulation.simulateDay();
-                    renderer.render();
-                    updateStats();
-                }
-            }
-        };
-        timer.start();
+        engine.addObserver(this);
 
         renderer.render();
-        updateStats();
     }
 
     @FXML
     private void onStart() {
-        running = true;
+        if (engineThread == null || !engineThread.isAlive()) {
+            engineThread = new Thread(engine);
+            engineThread.setDaemon(true);
+            engineThread.start();
+        }
     }
 
     @FXML
     private void onStop() {
-        running = false;
+        engine.stop();
     }
 
     @FXML
     private void onNextDay() {
-        simulation.simulateDay();
-        renderer.render();
-        updateStats();
+        engine.runSync();
     }
 
-    private void updateStats() {
-        var s = simulation.getLastStats();
+    @Override
+    public void simulationChanged(SimulationStatistics stats, WorldMap map) {
+        Platform.runLater(() -> {
+            renderer.render();
+            updateStats(stats);
+        });
+    }
+
+    private void updateStats(SimulationStatistics s) {
         statsLabel.setText(
                 "Day: " + s.day() +
                         " | Animals: " + s.animalCount() +
