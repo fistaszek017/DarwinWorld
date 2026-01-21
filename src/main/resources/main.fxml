@@ -17,11 +17,14 @@
     </top>
 
     <center>
-        <Canvas fx:id="canvas" width="800" height="800"/>
+        <Canvas fx:id="canvas" width="600" height="600"/>
     </center>
 
     <bottom>
-        <Label fx:id="statsLabel"/>
+        <VBox spacing="5" alignment="CENTER">
+            <Label fx:id="statsLabel1"/>
+            <Label fx:id="statsLabel2"/>
+        </VBox>
     </bottom>
 
 </BorderPane>

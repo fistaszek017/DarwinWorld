@@ -8,10 +8,17 @@ import javafx.scene.control.Label;
 import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.simulation.*;
 
+import java.util.Arrays;
+
 public class MainController implements SimulationChangeListener {
 
+    public static double roundTo2(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
+
     @FXML private Canvas canvas;
-    @FXML private Label statsLabel;
+    @FXML private Label statsLabel1;
+    @FXML private Label statsLabel2;
 
     private SimulationEngine engine;
     private SimulationRenderer renderer;
@@ -57,11 +64,17 @@ public class MainController implements SimulationChangeListener {
     }
 
     private void updateStats(SimulationStatistics s) {
-        statsLabel.setText(
+        statsLabel1.setText(
                 "Day: " + s.day() +
                         " | Animals: " + s.animalCount() +
                         " | Plants: " + s.plantCount() +
-                        " | Free fields: " + s.freeFields()
+                        " | Free fields: " + roundTo2(s.freeFields()) +
+                        " | Average energy: " + roundTo2(s.avgEnergy())
+        );
+        statsLabel2.setText(
+                    "Average life span: " + roundTo2(s.avgLifeSpan()) +
+                    " | Average children count: " + roundTo2(s.avgChildrenCount()) +
+                    " | Most popular genome: " + Arrays.toString(s.mostPopularGenome())
         );
     }
 }
