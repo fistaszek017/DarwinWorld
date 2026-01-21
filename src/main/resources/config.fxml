@@ -15,72 +15,72 @@
 
     <HBox spacing="10">
         <Label text="Szerokość mapy:"/>
-        <TextField fx:id="mapWidth" promptText="10"/>
+        <TextField fx:id="mapWidth" promptText="10" text="10"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Wysokość mapy:"/>
-        <TextField fx:id="mapHeight" promptText="10"/>
+        <TextField fx:id="mapHeight" promptText="10" text="10"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Początkowa liczba roślin:"/>
-        <TextField fx:id="initialPlantCount" promptText="10"/>
+        <TextField fx:id="initialPlantCount" promptText="10" text="10"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Wartość odżywcza roślin:"/>
-        <TextField fx:id="plantNutritionalValue" promptText="5"/>
+        <TextField fx:id="plantNutritionalValue" promptText="5" text="5"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Liczba roślin pojawiających się każdego dnia:"/>
-        <TextField fx:id="plantsToSpawnEachDay" promptText="2"/>
+        <TextField fx:id="plantsToSpawnEachDay" promptText="2" text="2"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Początkowa liczba zwierząt:"/>
-        <TextField fx:id="initialAnimalCount" promptText="5"/>
+        <TextField fx:id="initialAnimalCount" promptText="5" text="5"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Początkowa energia zwierząt:"/>
-        <TextField fx:id="initialAnimalEnergyValue" promptText="20"/>
+        <TextField fx:id="initialAnimalEnergyValue" promptText="20" text="20"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Energia tracona każdego dnia przez zwierzęta:"/>
-        <TextField fx:id="animalDailyEnergyLoss" promptText="1"/>
+        <TextField fx:id="animalDailyEnergyLoss" promptText="1" text="1"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Próg dobrego odżywienia zwierzęcia:"/>
-        <TextField fx:id="animalWellFedThreshold" promptText="10"/>
+        <TextField fx:id="animalWellFedThreshold" promptText="10" text="10"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Koszt reprodukcji zwierząt:"/>
-        <TextField fx:id="animalReproductionCost" promptText="5"/>
+        <TextField fx:id="animalReproductionCost" promptText="5" text="5"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Minimalna liczba mutacji:"/>
-        <TextField fx:id="minMutationCount" promptText="0"/>
+        <TextField fx:id="minMutationCount" promptText="0" text="0"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Maksymalna liczba mutacji:"/>
-        <TextField fx:id="maxMutationCount" promptText="2"/>
+        <TextField fx:id="maxMutationCount" promptText="2" text="2"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Długość genomu:"/>
-        <TextField fx:id="genomeLength" promptText="5"/>
+        <TextField fx:id="genomeLength" promptText="5" text="5"/>
     </HBox>
 
     <HBox spacing="10">
         <Label text="Opóźnienie symulacji:"/>
-        <TextField fx:id="delay" promptText="500"/>
+        <TextField fx:id="delay" promptText="500" text="500"/>
     </HBox>
 
     <!-- Tutaj jeszcze do ogarnięcia wariant -->
@@ -91,22 +91,22 @@
     <VBox fx:id="variantBox" spacing="10" visible="false" managed="false">
         <HBox spacing="10">
             <Label text="Minimalna ilość energii do rozpoczęcia uprawy:"/>
-            <TextField fx:id="cultivationEnergyThreshold" promptText="1"/>
+            <TextField fx:id="cultivationEnergyThreshold" promptText="8" text="8"/>
         </HBox>
 
         <HBox spacing="10">
             <Label text="Minimalny poziom żyzności gleby:"/>
-            <TextField fx:id="fertileSoilThreshold" promptText="1"/>
+            <TextField fx:id="fertileSoilThreshold" promptText="3" text="3"/>
         </HBox>
 
         <HBox spacing="10">
             <Label text="Czas żyzności gleby:"/>
-            <TextField fx:id="fertileSoilDuration" promptText="1"/>
+            <TextField fx:id="fertileSoilDuration" promptText="7" text="7"/>
         </HBox>
 
         <HBox spacing="10">
             <Label text="Liczba dużych roślin:"/>
-            <TextField fx:id="largePlantCapacity" promptText="1"/>
+            <TextField fx:id="largePlantCapacity" promptText="4" text="4"/>
         </HBox>
     </VBox>
 
