@@ -41,7 +41,7 @@ public class VariantMap extends AbstractWorldMap{
 
 
     private void updateFertility(){
-        jungleCellsDuration.replaceAll((position, days) -> days - 1);
+        jungleCellsDuration.replaceAll((_, days) -> days - 1);
         jungleCellsDuration.values().removeIf(days -> days <= 0);
     }
 
@@ -49,8 +49,8 @@ public class VariantMap extends AbstractWorldMap{
     @Override
     public void growPlants(int count) {
         updateFertility();
-        List<Vector2D> preferredFields = new ArrayList<>(); // Żyzne
-        List<Vector2D> standardFields = new ArrayList<>();  // Zwykłe
+        List<Vector2D> jungleFields = new ArrayList<>();
+        List<Vector2D> standardFields = new ArrayList<>();
 
         for (int x = 0; x < config.mapWidth(); x++) {
             for (int y = 0; y < config.mapHeight(); y++) {
@@ -59,7 +59,7 @@ public class VariantMap extends AbstractWorldMap{
                 if (plantPresent(pos)) continue;
 
                 if (jungleCellsDuration.containsKey(pos)) {
-                    preferredFields.add(pos);
+                    jungleFields.add(pos);
                 } else {
                     standardFields.add(pos);
                 }
@@ -69,18 +69,18 @@ public class VariantMap extends AbstractWorldMap{
         Random rand = new Random();
 
         for (int i = 0; i < count; i++) {
-            if (preferredFields.isEmpty() && standardFields.isEmpty()) break;
+            if (jungleFields.isEmpty() && standardFields.isEmpty()) break;
 
             boolean chooseJungle = rand.nextDouble() < JUNGLE_PLANT_SPAWN_CHANCE;
 
             List<Vector2D> targetList;
 
             if (chooseJungle) {
-                if (!preferredFields.isEmpty()) targetList = preferredFields;
+                if (!jungleFields.isEmpty()) targetList = jungleFields;
                 else targetList = standardFields;
             } else {
                 if (!standardFields.isEmpty()) targetList = standardFields;
-                else targetList = preferredFields;
+                else targetList = jungleFields;
             }
 
             if (targetList.isEmpty()) continue;
