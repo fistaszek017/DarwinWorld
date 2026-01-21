@@ -9,7 +9,7 @@
             fx:controller="org.darwin_world.MainController">
 
     <top>
-        <HBox spacing="10">
+        <HBox spacing="10" alignment="TOP_CENTER">
             <Button text="Start" onAction="#onStart"/>
             <Button text="Stop" onAction="#onStop"/>
             <Button text="Next Day" onAction="#onNextDay"/>
@@ -17,7 +17,9 @@
     </top>
 
     <center>
-        <Canvas fx:id="canvas" width="600" height="600"/>
+        <StackPane fx:id="mapcontainer">
+            <Canvas fx:id="canvas" width="600" height="600"/>
+        </StackPane>
     </center>
 
     <bottom>

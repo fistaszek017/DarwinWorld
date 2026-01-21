@@ -1,10 +1,12 @@
 package org.darwin_world;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 
+import javafx.scene.layout.StackPane;
 import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.simulation.*;
 
@@ -17,6 +19,7 @@ public class MainController implements SimulationChangeListener {
     }
 
     @FXML private Canvas canvas;
+    @FXML private StackPane mapcontainer;
     @FXML private Label statsLabel1;
     @FXML private Label statsLabel2;
 
@@ -26,6 +29,20 @@ public class MainController implements SimulationChangeListener {
     private Thread engineThread;
 
     public void init(SimulationConfig config, int id) {
+        //map scaling
+        double originalWidth = 600;
+        double originalHeight = 600;
+        mapcontainer.setMinSize(0, 0);
+
+        canvas.scaleXProperty().bind(
+                Bindings.min(
+                        mapcontainer.widthProperty().divide(originalWidth),
+                        mapcontainer.heightProperty().divide(originalHeight)
+                )
+        );
+        canvas.scaleYProperty().bind(canvas.scaleXProperty());
+
+        //engine
         this.engine = new SimulationEngine(config, id);
         WorldMap map = engine.getMap();
 
