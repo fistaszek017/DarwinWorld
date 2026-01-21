@@ -86,7 +86,7 @@
         <TextField fx:id="delay" promptText="500" text="500"/>
     </HBox>
 
-    <!-- Tutaj jeszcze do ogarnięcia wariant -->
+    <!-- WARIANT -->
     <HBox spacing="10" alignment="BASELINE_RIGHT">
         <CheckBox fx:id="variantEnabled" text="Wariant: Uprawianie Ziemi" onAction="#onVariantToggle"/>
     </HBox>
