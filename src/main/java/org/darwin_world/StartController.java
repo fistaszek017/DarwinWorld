@@ -12,6 +12,7 @@ import org.darwin_world.model.map.WorldMap;
 import org.darwin_world.model.map.GlobeMap;
 import org.darwin_world.model.simulation.Simulation;
 import org.darwin_world.model.simulation.SimulationConfig;
+import org.darwin_world.model.util.SimulationIdGenerator;
 
 public class StartController {
 
@@ -90,26 +91,25 @@ public class StartController {
         );
 
         WorldMap map = new GlobeMap(config);
-        Simulation simulation = new Simulation(map, config, 1);
-
-        openMainWindow(simulation, map, config);
+        int id = SimulationIdGenerator.nextId();
+        Simulation simulation = new Simulation(map, config, id);
+        openMainWindow(simulation, map, config, id);
     }
 
-    private void openMainWindow(Simulation simulation, WorldMap map, SimulationConfig config) {
+    private void openMainWindow(Simulation simulation, WorldMap map, SimulationConfig config, int id) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
             Scene scene = new Scene(loader.load());
 
             MainController controller = loader.getController();
-            int id = 1;
             controller.init(config, id);
 
             Stage stage = new Stage();
             stage.setScene(scene);
-            stage.setTitle("Darwin World Simulation");
+            stage.setTitle("Darwin World Simulation no " + id);
             stage.show();
 
-            ((Stage) mapWidth.getScene().getWindow()).close();
+            //((Stage) mapWidth.getScene().getWindow()).close(); //zakomentowuje bo chcę żeby można bylo wywolac duzo symulacji naraz
 
         } catch (Exception e) {
             e.printStackTrace();
