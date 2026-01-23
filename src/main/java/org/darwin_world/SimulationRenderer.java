@@ -79,6 +79,8 @@ public class SimulationRenderer {
                 gc.fillOval(x, y, size, size);
 
                 i++;
+
+            }
         });
 
 
