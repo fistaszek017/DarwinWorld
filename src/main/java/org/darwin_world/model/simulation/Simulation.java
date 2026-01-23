@@ -11,7 +11,6 @@ import java.util.*;
 
 public class Simulation {
 
-    private final int id;
     private int dayCount = 0;
     private final WorldMap map;
     private final SimulationConfig config;
@@ -20,19 +19,17 @@ public class Simulation {
 
     //stats
     private final int cellCount;
-    private int deadAnimalsCount = 0;
-    private long sumOfDeadLifeSpan = 0;
-    private final Map<List<Integer>, Integer> genomeCount = new HashMap<>();
 
-    private final List<SimulationStatistics> statsHistory = new ArrayList<>();      //might need modification if simulation will be long
+    //
 
-    private final StatsFileManager statsWriter;
+    private final GeneUtils geneUtils;
+    private final StatsManager statsManager;
 
     public Simulation(WorldMap map, SimulationConfig config, int id) {
         this.map = map;
         this.config = config;
-        this.id = id;
-        this.statsWriter = new StatsFileManager(id);
+        this.geneUtils = new GeneUtils(config);
+        this.statsManager = new StatsManager(id);
 
         this.cellCount = config.mapWidth() * config.mapHeight();
 
@@ -50,80 +47,36 @@ public class Simulation {
             Vector2D position = new Vector2D(x, y);
             MapDirection direction = MapDirection.values()[rand.nextInt(8)];
 
-            Animal animal = new Animal(direction, position, config.initialAnimalEnergyValue(), generateRandomGenes(), config);
+            int[] genes = geneUtils.generateRandomGenes();
+
+            Animal animal = new Animal(direction, position, config.initialAnimalEnergyValue(), genes, config);
 
             try {
                 map.placeAnimal(animal, position);
                 animalsList.add(animal);
-                updateGenomesPopularityList(animal.getGenes(), 1);
+                statsManager.registerBirth(genes);
             } catch (IncorrectPositionException e) {
                 System.out.println(e.getMessage());
             }
         }
 
         map.growPlants(config.initialPlantCount());
-        updateStats();
-    }
-
-    private int[] generateRandomGenes()
-    {
-        int[] geneTable = new int[config.genomeLength()];
-        Random rand = new Random();
-        for (int i = 0; i < config.genomeLength(); i++) {
-            geneTable[i] = rand.nextInt(8);
-        }
-
-        return geneTable;
-    }
-
-    private void updateGenomesPopularityList(int[] genes, int change) {
-        List<Integer> genesList = Arrays.stream(genes).boxed().toList();
-        genomeCount.merge(genesList, change, Integer::sum);
-
-        if (genomeCount.get(genesList) <= 0) {
-            genomeCount.remove(genesList);
-        }
+        statsManager.updateAndSaveStats(dayCount, animalsList, map, cellCount);
     }
 
     private void reproduceAnimals(Animal first, Animal second)  { // assuming the first animal is the stronger one
-        int totalEnergy = first.getEnergy() + second.getEnergy();
 
-        int firstShare = (int) ((double) first.getEnergy() / totalEnergy * config.genomeLength());
-        int secondShare = config.genomeLength() - firstShare;
-        int startEnergy = config.animalReproductionCost() * 2;      //TODO ?? i assume this is correct, might need rethinking
-        int[] result = new int[config.genomeLength()];
+        int[] childGenes = geneUtils.createChildGenotype(first, second);
+        int startEnergy = config.animalReproductionCost() * 2;
 
         Random rand = new Random();
 
-        // baseline genes
-        if (rand.nextBoolean()) {
-            System.arraycopy(first.getGenes(), 0, result, 0, firstShare);
-            System.arraycopy(second.getGenes(), config.genomeLength() - secondShare, result, firstShare, secondShare);
-        }
-        else {
-            System.arraycopy(second.getGenes(), 0, result, 0, secondShare);
-            System.arraycopy(first.getGenes(), config.genomeLength() - firstShare, result, secondShare, firstShare);
-        }
-
-        // mutations (quick solution)
-        int mutations = rand.nextInt(config.minMutationCount(), config.maxMutationCount() + 1);
-        Set<Integer> used = new HashSet<>();
-
-        while (mutations > 0) {
-            Integer index = rand.nextInt(config.genomeLength());
-            if (!used.contains(index)) {
-                used.add(index);
-                result[index] = (result[index] + 1 + rand.nextInt(7)) % 8;
-                mutations--;
-            }
-        }
-
-        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), startEnergy, result, config);
+        Animal child = new Animal(MapDirection.values()[rand.nextInt(8)], first.getMapPosition(), startEnergy, childGenes, config);
 
         try {
             map.placeAnimal(child, child.getMapPosition());
             animalsList.add(child);
-            updateGenomesPopularityList(result, 1);
+            statsManager.registerBirth(childGenes);
         } catch (IncorrectPositionException e) {
             System.out.println(e.getMessage());
         }
@@ -135,11 +88,9 @@ public class Simulation {
     }
 
     private void removeAnimal(Animal animal) {
-        deadAnimalsCount++;
-        sumOfDeadLifeSpan += animal.getAge();
         try {
             map.removeAnimal(animal, animal.getMapPosition());
-            updateGenomesPopularityList(animal.getGenes(), -1);
+            statsManager.registerDeath(animal);
         } catch (IncorrectPositionException e) {
             System.out.println(e.getMessage());
         }
@@ -210,33 +161,6 @@ public class Simulation {
         }
     }
 
-    private void updateStats() {
-        int currentAnimalCount = animalsList.size();
-        int currentPlantCount = map.getPlants().size();
-
-        double avgEnergy = animalsList.stream().mapToInt(Animal::getEnergy).average().orElse(0.0);
-        double avgChildren = animalsList.stream().mapToInt(Animal::getChildrenCount).average().orElse(0.0);
-
-        double avgLifeSpan = deadAnimalsCount == 0 ? 0.0 :
-                (double)  sumOfDeadLifeSpan / deadAnimalsCount;
-
-        int freeFields = cellCount - map.getOccupiedFieldsCount();
-
-        List<Integer> genomeList = genomeCount.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(new ArrayList<>());
-        int[] mostPopularGenome = genomeList.stream().mapToInt(Integer::intValue).toArray();
-
-        SimulationStatistics dailyStats = new SimulationStatistics(dayCount, currentAnimalCount, currentPlantCount, freeFields, avgEnergy, avgLifeSpan, avgChildren, mostPopularGenome);
-
-        statsHistory.add(dailyStats);
-        statsWriter.saveStat(dailyStats);
-    }
-
-    public SimulationStatistics getLastStats() {
-        return statsHistory.getLast();
-    }
-
-
-
     public void simulateDay() {
 
         dayCount++;
@@ -249,7 +173,11 @@ public class Simulation {
         taxAnimals();
         map.growPlants(config.plantsToSpawnEachDay());
 
-        updateStats();
+        statsManager.updateAndSaveStats(dayCount, animalsList, map, cellCount);
 
+    }
+
+    public SimulationStatistics getLastStats() {
+        return statsManager.getLastStats();
     }
 }
