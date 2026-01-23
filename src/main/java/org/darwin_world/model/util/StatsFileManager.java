@@ -3,17 +3,22 @@ package org.darwin_world.model.util;
 import org.darwin_world.model.simulation.SimulationStatistics;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.UUID;
 
 public class StatsFileManager {
     private BufferedWriter writer;
 
     public StatsFileManager(int id) {
-        String fileName = "stats_" + id + ".csv";
+        String fileName = "staty/stats_" + id + ".csv";
+        File plik = new File(fileName);
 
         try {
+
+            if (plik.getParentFile() != null) {
+                plik.getParentFile().mkdirs();
+            }
             this.writer = new BufferedWriter(new FileWriter(fileName));
             writeHeader();
         } catch (IOException e) {
