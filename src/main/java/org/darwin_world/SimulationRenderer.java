@@ -5,7 +5,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.darwin_world.model.elements.Animal;
 import org.darwin_world.model.map.WorldMap;
+import org.darwin_world.model.simulation.SimulationStatistics;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class SimulationRenderer {
@@ -77,7 +79,6 @@ public class SimulationRenderer {
                 gc.fillOval(x, y, size, size);
 
                 i++;
-            }
         });
 
 

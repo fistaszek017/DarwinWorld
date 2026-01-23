@@ -8,7 +8,7 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="org.darwin_world.StartController"
       spacing="10"
-      minWidth="450"
+      minWidth="400"
       minHeight="750"
       alignment="TOP_CENTER"
         >
